@@ -1,0 +1,3368 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>
+      React.js Interview Prep · Senior / Staff (Google · Meta · Netflix)
+    </title>
+    <meta
+      name="description"
+      content="Senior/staff-level React.js interview prep — Fiber, hooks, concurrent React, RSC, performance, patterns, system design, coding challenges."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%9B%EF%B8%8F%3C/text%3E%3C/svg%3E"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+    />
+    <style>
+      :root {
+        --bg: #0b0d12;
+        --elev: #12151c;
+        --elev2: #171b24;
+        --border: #232833;
+        --text: #e6e9ef;
+        --dim: #9aa3b2;
+        --muted: #6b7385;
+        --accent: #61dafb;
+        --accent2: #a78bfa;
+        --ok: #34d399;
+        --warn: #fbbf24;
+        --danger: #f87171;
+        --code: #0f1218;
+      }
+      [data-theme="light"] {
+        --bg: #fff;
+        --elev: #f7f8fa;
+        --elev2: #eef1f6;
+        --border: #e2e6ee;
+        --text: #0f172a;
+        --dim: #4b5563;
+        --muted: #6b7280;
+        --accent: #0284c7;
+        --accent2: #7c3aed;
+        --ok: #059669;
+        --warn: #d97706;
+        --danger: #dc2626;
+        --code: #f3f4f8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px;
+      }
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      code,
+      pre,
+      kbd {
+        font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+        font-size: 0.9em;
+      }
+      header.top {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: saturate(180%) blur(12px);
+        background: color-mix(in oklab, var(--bg) 85%, transparent);
+        border-bottom: 1px solid var(--border);
+      }
+      .top-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .logo {
+        font-weight: 800;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        box-shadow: 0 0 12px var(--accent);
+      }
+      .search {
+        flex: 1;
+        max-width: 480px;
+        position: relative;
+      }
+      .search input {
+        width: 100%;
+        padding: 10px 14px 10px 38px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--elev);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.9rem;
+        outline: none;
+      }
+      .search input:focus {
+        border-color: var(--accent);
+      }
+      .search::before {
+        content: "🔍";
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.85rem;
+        opacity: 0.7;
+      }
+      .btn {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--elev);
+        color: var(--text);
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      .btn:hover {
+        background: var(--elev2);
+        border-color: var(--accent);
+      }
+      .layout {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 32px;
+        padding: 24px;
+      }
+      aside.sidebar {
+        position: sticky;
+        top: 80px;
+        align-self: start;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        padding-right: 8px;
+      }
+      aside.sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+      aside.sidebar::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+      .toc-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-weight: 600;
+        margin: 16px 0 8px;
+      }
+      .toc a {
+        display: block;
+        padding: 6px 12px;
+        color: var(--dim);
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 0.88rem;
+        margin: 2px 0;
+        border-left: 2px solid transparent;
+      }
+      .toc a:hover {
+        color: var(--text);
+        background: var(--elev);
+      }
+      .toc a.active {
+        color: var(--accent);
+        border-left-color: var(--accent);
+        background: var(--elev);
+      }
+      main {
+        min-width: 0;
+      }
+      .hero {
+        padding: 40px 32px;
+        border-radius: 16px;
+        background: linear-gradient(
+          135deg,
+          color-mix(in oklab, var(--accent) 15%, var(--elev)),
+          color-mix(in oklab, var(--accent2) 10%, var(--elev))
+        );
+        border: 1px solid var(--border);
+        margin-bottom: 40px;
+      }
+      .hero h1 {
+        margin: 0 0 12px;
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .hero p {
+        margin: 0;
+        color: var(--dim);
+        font-size: 1.05rem;
+        max-width: 720px;
+      }
+      .hero .meta {
+        margin-top: 20px;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      section {
+        margin: 48px 0;
+        padding-top: 8px;
+      }
+      section > h2 {
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin: 0 0 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      section > h2 .num {
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      h3 {
+        font-size: 1.2rem;
+        margin: 32px 0 8px;
+        font-weight: 600;
+      }
+      h4 {
+        font-size: 1rem;
+        margin: 20px 0 4px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+      p {
+        color: var(--dim);
+        margin: 8px 0;
+      }
+      ul,
+      ol {
+        color: var(--dim);
+        padding-left: 24px;
+      }
+      li {
+        margin: 4px 0;
+      }
+      strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      :not(pre) > code {
+        background: var(--code);
+        color: var(--accent);
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        font-size: 0.85em;
+      }
+      pre {
+        background: var(--code) !important;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px 18px !important;
+        overflow-x: auto;
+        margin: 12px 0;
+        font-size: 0.85rem;
+        line-height: 1.55;
+      }
+      pre::-webkit-scrollbar {
+        height: 8px;
+      }
+      pre::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+      .callout {
+        padding: 14px 18px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--elev);
+        margin: 16px 0;
+        border-left: 3px solid var(--accent);
+      }
+      .callout.warn {
+        border-left-color: var(--warn);
+      }
+      .callout.ok {
+        border-left-color: var(--ok);
+      }
+      .callout.danger {
+        border-left-color: var(--danger);
+      }
+      .callout .label {
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--accent);
+        margin-bottom: 4px;
+      }
+      .callout.warn .label {
+        color: var(--warn);
+      }
+      .callout.ok .label {
+        color: var(--ok);
+      }
+      .callout.danger .label {
+        color: var(--danger);
+      }
+      details.qa {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--elev);
+        margin: 10px 0;
+        overflow: hidden;
+      }
+      details.qa[open] {
+        border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+      }
+      details.qa summary {
+        padding: 14px 18px;
+        cursor: pointer;
+        font-weight: 500;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        color: var(--text);
+      }
+      details.qa summary::-webkit-details-marker {
+        display: none;
+      }
+      details.qa summary::after {
+        content: "+";
+        color: var(--accent);
+        font-size: 1.3rem;
+        font-weight: 300;
+      }
+      details.qa[open] summary::after {
+        content: "−";
+      }
+      details.qa summary:hover {
+        background: var(--elev2);
+      }
+      details.qa .qa-body {
+        padding: 4px 18px 18px;
+        border-top: 1px solid var(--border);
+      }
+      .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: color-mix(in oklab, var(--accent) 15%, transparent);
+        color: var(--accent);
+        border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+      }
+      .tag.hot {
+        background: color-mix(in oklab, var(--danger) 15%, transparent);
+        color: var(--danger);
+        border-color: color-mix(in oklab, var(--danger) 30%, transparent);
+      }
+      .tag.new {
+        background: color-mix(in oklab, var(--ok) 15%, transparent);
+        color: var(--ok);
+        border-color: color-mix(in oklab, var(--ok) 30%, transparent);
+      }
+      .table-wrap {
+        overflow-x: auto;
+        margin: 14px 0;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        color: var(--dim);
+      }
+      th {
+        background: var(--elev);
+        color: var(--text);
+        font-weight: 600;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: var(--elev);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        margin: 16px 0;
+      }
+      .card {
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--elev);
+      }
+      .card h4 {
+        margin: 0 0 6px;
+        font-size: 0.95rem;
+      }
+      .card p {
+        margin: 0;
+        font-size: 0.85rem;
+      }
+      footer {
+        text-align: center;
+        padding: 40px 24px;
+        color: var(--muted);
+        font-size: 0.85rem;
+        border-top: 1px solid var(--border);
+        margin-top: 60px;
+      }
+      footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      @media print {
+        aside.sidebar,
+        header.top,
+        footer {
+          display: none;
+        }
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        details.qa {
+          break-inside: avoid;
+        }
+        details.qa .qa-body {
+          display: block !important;
+        }
+        details.qa summary::after {
+          display: none;
+        }
+      }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        aside.sidebar {
+          position: static;
+          max-height: none;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          padding: 12px;
+          margin-bottom: 20px;
+        }
+        .search {
+          max-width: none;
+        }
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="top-inner">
+        <div class="logo">
+          <span class="dot"></span><span>React · Senior Interview Prep</span>
+        </div>
+        <div class="search">
+          <input
+            type="search"
+            id="search"
+            placeholder="Search topics…"
+            aria-label="Search"
+          />
+        </div>
+        <button class="btn" id="expand-all">Expand all</button>
+        <button class="btn" id="theme-toggle" aria-label="Toggle theme">
+          🌓
+        </button>
+      </div>
+    </header>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="toc-title">Contents</div>
+        <nav class="toc" id="toc">
+          <a href="#fundamentals">1. Fundamentals &amp; Mental Model</a>
+          <a href="#jsx">2. JSX &amp; Elements</a>
+          <a href="#components">3. Components &amp; Props</a>
+          <a href="#state">4. State &amp; Lifecycle</a>
+          <a href="#hooks">5. Hooks Deep Dive</a>
+          <a href="#advanced-hooks">6. Advanced &amp; Custom Hooks</a>
+          <a href="#fiber">7. Fiber &amp; Reconciliation</a>
+          <a href="#render-commit">8. Render &amp; Commit Phases</a>
+          <a href="#performance">9. Performance</a>
+          <a href="#context">10. Context &amp; State Mgmt</a>
+          <a href="#refs">11. Refs &amp; DOM</a>
+          <a href="#errors">12. Error Boundaries</a>
+          <a href="#suspense">13. Suspense &amp; Concurrent</a>
+          <a href="#react-19">14. React 18 / 19 Features</a>
+          <a href="#rsc">15. Server Components &amp; Actions</a>
+          <a href="#patterns">16. Design Patterns</a>
+          <a href="#forms">17. Forms &amp; Validation</a>
+          <a href="#testing">18. Testing</a>
+          <a href="#a11y">19. Accessibility</a>
+          <a href="#security">20. Security</a>
+          <a href="#ts">21. TypeScript with React</a>
+          <a href="#pitfalls">22. Pitfalls &amp; Bugs</a>
+          <a href="#coding">23. Coding Challenges</a>
+          <a href="#system-design">24. System Design</a>
+          <a href="#rapid-fire">25. Rapid-Fire Q&amp;A</a>
+          <a href="#behavioral">26. Behavioral</a>
+          <a href="#checklist">27. Prep Checklist</a>
+        </nav>
+      </aside>
+      <main>
+        <div class="hero">
+          <h1>React.js Interview Prep</h1>
+          <p>
+            A senior/staff-engineer-level study guide targeting bar-raiser
+            interviews at Google, Meta, Netflix, and equivalent. Covers the
+            Fiber architecture, hooks internals, concurrent rendering, RSC,
+            performance profiling, patterns, and end-to-end system design.
+          </p>
+          <div class="meta">
+            <span>⚛️ React 18 / 19</span>
+            <span>🎯 Senior / Staff</span>
+            <span>📚 27 sections</span>
+            <span>💻 Live-coding drills</span>
+            <span>🖨️ Print-friendly</span>
+          </div>
+        </div>
+
+        <section id="fundamentals">
+          <h2><span class="num">01</span>Fundamentals &amp; Mental Model</h2>
+          <h3>What React actually is</h3>
+          <p>
+            A <strong>UI library</strong> that turns a description of the UI (a
+            tree of elements) into DOM mutations. Two packages split
+            responsibilities: <code>react</code> defines the component API and
+            reconciliation algorithm; <code>react-dom</code> (or
+            <code>react-native</code>, <code>react-three-fiber</code>, etc.) is
+            the renderer that commits changes to a host environment.
+          </p>
+          <h3>Core principles</h3>
+          <ul>
+            <li>
+              <strong>Declarative</strong> — describe the UI as a function of
+              state; React figures out the transitions.
+            </li>
+            <li>
+              <strong>Component-based</strong> — small, composable units with
+              local state and explicit boundaries.
+            </li>
+            <li>
+              <strong>One-way data flow</strong> — props flow down; events
+              bubble up through callbacks.
+            </li>
+            <li>
+              <strong>Immutability of state</strong> — never mutate; return new
+              references so reconciliation can detect changes cheaply.
+            </li>
+            <li>
+              <strong>Referential transparency</strong> — a component with the
+              same props and state should produce the same output. Purity is
+              what lets React skip renders, replay renders in Strict Mode, and
+              time-slice with Concurrent React.
+            </li>
+          </ul>
+          <h3>Virtual DOM vs Real DOM vs Fiber</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Layer</th>
+                  <th>Represents</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>React Element</td>
+                  <td>Plain object <code>{ type, props, key }</code></td>
+                  <td>Immutable description of UI at a point in time</td>
+                </tr>
+                <tr>
+                  <td>Fiber Node</td>
+                  <td>Mutable work unit</td>
+                  <td>
+                    Internal data structure representing a component instance +
+                    work in progress
+                  </td>
+                </tr>
+                <tr>
+                  <td>Virtual DOM</td>
+                  <td>Element tree in memory</td>
+                  <td>Enables diffing without touching real DOM</td>
+                </tr>
+                <tr>
+                  <td>Host DOM</td>
+                  <td>Actual browser nodes</td>
+                  <td>What the user sees</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout">
+            <div class="label">Interview framing</div>
+            <p>
+              Don't say "React is fast because of the Virtual DOM". Say: React
+              is fast because it <strong>batches</strong> updates,
+              <strong>diffs</strong> in memory (cheap object comparisons), and
+              <strong>commits</strong> only the minimal set of DOM mutations —
+              plus, since React 18, it can <strong>interrupt</strong> rendering
+              to keep the main thread responsive.
+            </p>
+          </div>
+          <h3>React 18 / 19 highlights</h3>
+          <ul>
+            <li>
+              <strong>Concurrent rendering</strong> — interruptible renders,
+              transitions, automatic batching everywhere.
+            </li>
+            <li>
+              <strong>Suspense for data</strong> — components can "wait" for
+              async work.
+            </li>
+            <li>
+              <strong>React Server Components</strong> — components that never
+              ship JS.
+            </li>
+            <li>
+              <strong
+                >Actions &amp; <code>useOptimistic</code> /
+                <code>useFormStatus</code></strong
+              >
+              — first-class async form handling (React 19).
+            </li>
+            <li>
+              <strong><code>use()</code> hook</strong> — suspend on any promise
+              or context, inline.
+            </li>
+            <li>
+              <strong>React Compiler</strong> — auto-memoization at build time
+              (React 19+).
+            </li>
+          </ul>
+        </section>
+
+        <section id="jsx">
+          <h2><span class="num">02</span>JSX &amp; Elements</h2>
+          <h3>What JSX compiles to</h3>
+          <p>
+            JSX is syntactic sugar for <code>React.createElement</code> (or the
+            new <code>jsx()</code> runtime introduced in React 17). It produces
+            <strong>plain immutable objects</strong>, not DOM nodes.
+          </p>
+          <pre><code class="language-tsx">// Source
+&lt;button className="primary" onClick={onClick}&gt;Save&lt;/button&gt;
+
+// Classic runtime (pre-17)
+React.createElement('button', { className: 'primary', onClick }, 'Save')
+
+// Automatic runtime (17+)
+import { jsx as _jsx } from 'react/jsx-runtime'
+_jsx('button', { className: 'primary', onClick, children: 'Save' })
+
+// Element shape
+{ type: 'button', props: { className, onClick, children: 'Save' }, key: null, ref: null }</code></pre>
+          <h3>Rules that trip candidates up</h3>
+          <ul>
+            <li>
+              Return <strong>a single root</strong> or use a fragment
+              (<code>&lt;&gt;…&lt;/&gt;</code>).
+            </li>
+            <li>
+              Lowercase names are DOM elements; capitalized names are
+              components. <code>&lt;button&gt;</code> vs
+              <code>&lt;Button&gt;</code>.
+            </li>
+            <li>
+              <code>class</code> → <code>className</code>, <code>for</code> →
+              <code>htmlFor</code>, camelCased event props
+              (<code>onClick</code>).
+            </li>
+            <li>
+              <code>style</code> takes an object with camelCased CSS properties.
+              Numeric values default to <code>px</code>.
+            </li>
+            <li>
+              Children of type <code>false</code>, <code>null</code>,
+              <code>undefined</code>, <code>true</code> render nothing.
+              <code>0</code> renders <strong>the string "0"</strong> — classic
+              bug: <code>{items.length &amp;&amp; &lt;List /&gt;}</code> renders
+              0 when empty.
+            </li>
+          </ul>
+          <div class="callout warn">
+            <div class="label">Falsy rendering gotcha</div>
+            <pre><code class="language-tsx">// Bug: renders "0" when items is empty
+{items.length &amp;&amp; &lt;List items={items} /&gt;}
+
+// Fix: coerce to boolean or ternary
+{items.length &gt; 0 &amp;&amp; &lt;List items={items} /&gt;}
+{items.length ? &lt;List items={items} /&gt; : null}</code></pre>
+          </div>
+          <h3>Keys</h3>
+          <p>
+            Keys tell React
+            <strong>which element corresponds to which</strong> between renders.
+            Without stable keys, React falls back to index-matching, which
+            corrupts local state on reorder / insert.
+          </p>
+          <ul>
+            <li>
+              Keys must be
+              <strong>stable, unique among siblings, and predictable</strong>.
+            </li>
+            <li>
+              Do not use array index unless the list is static (never reordered,
+              never inserted at head).
+            </li>
+            <li>
+              Keys are <strong>not passed as a prop</strong>. If you need it
+              inside the child, pass it explicitly as <code>id</code>.
+            </li>
+            <li>
+              Changing a key <strong>remounts</strong> the subtree — a useful
+              technique to reset state (e.g., form reset on route change).
+            </li>
+          </ul>
+        </section>
+
+        <section id="components">
+          <h2><span class="num">03</span>Components &amp; Props</h2>
+          <h3>Function vs class components</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Aspect</th>
+                  <th>Function</th>
+                  <th>Class</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>State</td>
+                  <td>
+                    Hooks (<code>useState</code>, <code>useReducer</code>)
+                  </td>
+                  <td><code>this.state</code></td>
+                </tr>
+                <tr>
+                  <td>Lifecycle</td>
+                  <td><code>useEffect</code>, <code>useLayoutEffect</code></td>
+                  <td><code>componentDidMount</code>, etc.</td>
+                </tr>
+                <tr>
+                  <td>Refs</td>
+                  <td><code>useRef</code>, forwardRef</td>
+                  <td><code>createRef</code></td>
+                </tr>
+                <tr>
+                  <td>Error boundary</td>
+                  <td>❌ (must be class)</td>
+                  <td>
+                    ✅ <code>componentDidCatch</code>,
+                    <code>getDerivedStateFromError</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Concurrent-ready</td>
+                  <td>Fully</td>
+                  <td>Legacy lifecycles are marked <code>UNSAFE_</code></td>
+                </tr>
+                <tr>
+                  <td>Bundle size / perf</td>
+                  <td>Smaller closures, no <code>this</code> binding cost</td>
+                  <td>Extra prototype overhead</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            <strong>Function components + hooks are the default.</strong>
+            Classes remain only for error boundaries — and even then, wrap with
+            a library like <code>react-error-boundary</code> for convenience.
+          </p>
+          <h3>Composition patterns</h3>
+          <h4>1. <code>children</code></h4>
+          <pre><code class="language-tsx">function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    &lt;section&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;div&gt;{children}&lt;/div&gt;
+    &lt;/section&gt;
+  )
+}</code></pre>
+          <h4>2. Slots via named props</h4>
+          <pre><code class="language-tsx">&lt;Layout header={&lt;Nav /&gt;} sidebar={&lt;Menu /&gt;}&gt;
+  &lt;Main /&gt;
+&lt;/Layout&gt;</code></pre>
+          <h4>3. Render props / function children</h4>
+          <pre><code class="language-tsx">&lt;MousePosition&gt;
+  {({ x, y }) =&gt; &lt;p&gt;{x}, {y}&lt;/p&gt;}
+&lt;/MousePosition&gt;</code></pre>
+          <h3>Prop rules seniors are expected to know</h3>
+          <ul>
+            <li>
+              <strong>Props are read-only.</strong> Never mutate
+              <code>props</code>; treat them as immutable inputs.
+            </li>
+            <li>
+              Prefer <strong>discriminated union types</strong> over optional
+              props for variant-based components.
+            </li>
+            <li>
+              Avoid <strong>prop-drilling</strong> more than 2–3 levels — use
+              composition, context, or state libs.
+            </li>
+            <li>
+              Do not spread unknown props onto DOM elements without filtering —
+              leaks non-standard attributes and warnings.
+            </li>
+            <li>
+              Use <code>as</code> prop or polymorphic components with generics
+              for reusable UI primitives.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">// Polymorphic component
+type Props&lt;T extends React.ElementType&gt; = {
+  as?: T
+  children: React.ReactNode
+} &amp; React.ComponentPropsWithoutRef&lt;T&gt;
+
+function Box&lt;T extends React.ElementType = 'div'&gt;({ as, ...rest }: Props&lt;T&gt;) {
+  const Cmp = as ?? 'div'
+  return &lt;Cmp {...rest} /&gt;
+}</code></pre>
+        </section>
+
+        <section id="state">
+          <h2><span class="num">04</span>State &amp; Lifecycle</h2>
+          <h3>What is "state"?</h3>
+          <p>
+            Data that changes over time and affects render output. When state
+            updates, React schedules a re-render of the owning component and its
+            descendants (subject to memoization).
+          </p>
+          <h3>Rules of state</h3>
+          <ul>
+            <li>
+              <strong>Never mutate</strong> — <code>state.push(x)</code> is a
+              bug; use <code>setState([...state, x])</code>.
+            </li>
+            <li>
+              <strong>Batched</strong> — multiple <code>setState</code> in the
+              same handler produce one render (React 18: everywhere, including
+              promises / timeouts).
+            </li>
+            <li>
+              <strong>Async in effect</strong> — reading state right after
+              setting it returns the old value; use the updater form or an
+              effect.
+            </li>
+            <li>
+              <strong>Colocate</strong> — put state as close to where it's used
+              as possible; lift only when truly shared.
+            </li>
+            <li>
+              <strong>Derived state is a smell</strong> — compute from existing
+              state during render instead of storing it.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">// ❌ Storing derived state — must sync manually
+const [items, setItems] = useState([])
+const [count, setCount] = useState(0) // duplicates items.length
+
+// ✅ Derive at render time — always in sync
+const [items, setItems] = useState([])
+const count = items.length</code></pre>
+          <h3>Updater function pattern</h3>
+          <pre><code class="language-tsx">// Race condition — reads possibly stale `count`
+setCount(count + 1)
+setCount(count + 1) // still +1, not +2
+
+// Correct — updater sees latest queued state
+setCount((c) =&gt; c + 1)
+setCount((c) =&gt; c + 1) // +2</code></pre>
+          <h3>Lifting state up</h3>
+          <p>
+            When two siblings need the same state, hoist it to their nearest
+            common ancestor. Downside: parent re-renders when either child's
+            state changes. Mitigate with <code>useMemo</code>, splitting
+            contexts, or component memoization.
+          </p>
+          <h3>Class lifecycle vs hooks (cheat sheet)</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Class</th>
+                  <th>Hook equivalent</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>constructor</code></td>
+                  <td><code>useState(() =&gt; initial)</code></td>
+                </tr>
+                <tr>
+                  <td><code>componentDidMount</code></td>
+                  <td><code>useEffect(fn, [])</code></td>
+                </tr>
+                <tr>
+                  <td><code>componentDidUpdate</code></td>
+                  <td><code>useEffect(fn, [deps])</code></td>
+                </tr>
+                <tr>
+                  <td><code>componentWillUnmount</code></td>
+                  <td>cleanup returned from <code>useEffect</code></td>
+                </tr>
+                <tr>
+                  <td><code>getDerivedStateFromProps</code></td>
+                  <td>Compute in render + <code>key</code> reset if needed</td>
+                </tr>
+                <tr>
+                  <td><code>shouldComponentUpdate</code></td>
+                  <td>
+                    <code>React.memo</code> + <code>useMemo</code>/<code
+                      >useCallback</code
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>getSnapshotBeforeUpdate</code></td>
+                  <td><code>useLayoutEffect</code></td>
+                </tr>
+                <tr>
+                  <td><code>componentDidCatch</code></td>
+                  <td>Still class-only</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="hooks">
+          <h2>
+            <span class="num">05</span>Hooks Deep Dive
+            <span class="tag hot">Hot</span>
+          </h2>
+          <h3>The two rules</h3>
+          <ol>
+            <li>
+              <strong>Call hooks at the top level.</strong> Never inside loops,
+              conditions, or nested functions.
+            </li>
+            <li>
+              <strong>Call hooks only from React functions.</strong> Function
+              components or other custom hooks.
+            </li>
+          </ol>
+          <p>
+            Why? React identifies hooks by <strong>call order</strong>. Each
+            component instance maintains a linked list of hook cells on its
+            Fiber node. If order changes across renders, cells shift and state
+            leaks between hooks.
+          </p>
+          <pre><code class="language-tsx">// Bug — order changes when `open` toggles
+if (open) {
+  const [x, setX] = useState(0)
+}
+useEffect(...)
+
+// Fix — always call, guard the work inside
+const [x, setX] = useState(0)
+useEffect(() =&gt; { if (open) { /* ... */ } }, [open])</code></pre>
+
+          <h3><code>useState</code></h3>
+          <ul>
+            <li>
+              Returns <code>[value, setValue]</code>.
+              <code>setValue</code> identity is stable across renders.
+            </li>
+            <li>
+              Lazy initializer: <code>useState(() =&gt; heavy())</code> runs
+              only on mount.
+            </li>
+            <li>
+              If updater returns the same value (Object.is), React bails out —
+              no re-render, no child re-render.
+            </li>
+          </ul>
+
+          <h3><code>useReducer</code> — when to use over useState</h3>
+          <ul>
+            <li>
+              Multiple related pieces of state that update together (form state,
+              wizard).
+            </li>
+            <li>Next state depends on previous state + action metadata.</li>
+            <li>Testability — reducer is a pure function you can unit test.</li>
+            <li>
+              Dispatch identity is stable, so it's safe to omit from effect
+              deps.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">type State = { count: number; step: number }
+type Action = { type: 'inc' } | { type: 'setStep'; step: number }
+const reducer = (s: State, a: Action): State =&gt; {
+  switch (a.type) {
+    case 'inc': return { ...s, count: s.count + s.step }
+    case 'setStep': return { ...s, step: a.step }
+  }
+}
+const [state, dispatch] = useReducer(reducer, { count: 0, step: 1 })</code></pre>
+
+          <h3><code>useEffect</code></h3>
+          <p>
+            Runs <strong>after commit</strong>, asynchronously. Used for
+            subscriptions, network, external systems. Do NOT use for computing
+            derived data (do it in render) or synchronizing props → state
+            (usually a design smell).
+          </p>
+          <pre><code class="language-tsx">useEffect(() =&gt; {
+  const controller = new AbortController()
+  fetch(url, { signal: controller.signal })
+    .then((r) =&gt; r.json())
+    .then(setData)
+    .catch((e) =&gt; { if (e.name !== 'AbortError') setError(e) })
+  return () =&gt; controller.abort()   // cleanup on unmount / dep change
+}, [url])</code></pre>
+          <div class="callout warn">
+            <div class="label">Strict Mode double-invoke</div>
+            <p>
+              In development, React 18 mounts → unmounts → mounts every effect
+              once to shake out bugs. Every effect must be resilient to being
+              re-run (idempotent cleanup, abortable requests). This does not
+              happen in production.
+            </p>
+          </div>
+
+          <h3><code>useLayoutEffect</code></h3>
+          <p>
+            Runs synchronously after DOM mutations, before paint. Use for
+            reading layout (offsets, sizes) and synchronously mutating DOM to
+            avoid flicker. Blocks paint — reserve for cases where
+            <code>useEffect</code> causes visible jank.
+          </p>
+
+          <h3><code>useMemo</code> &amp; <code>useCallback</code></h3>
+          <ul>
+            <li>
+              <code>useMemo(fn, deps)</code> memoizes the return value of
+              <code>fn</code>.
+            </li>
+            <li>
+              <code>useCallback(fn, deps)</code> ===
+              <code>useMemo(() =&gt; fn, deps)</code>.
+            </li>
+            <li>
+              They are not free — you pay for the deps array + comparison. Use
+              only when a real cost or referential-equality dependency exists.
+            </li>
+            <li>
+              React 19's compiler auto-memoizes — you'll write fewer of these by
+              hand.
+            </li>
+          </ul>
+
+          <h3>Legitimate reasons to memoize</h3>
+          <ol>
+            <li>Expensive pure computation (sorting, deriving large lists).</li>
+            <li>
+              Reference stability for a child wrapped in
+              <code>React.memo</code>.
+            </li>
+            <li>
+              Reference stability for a dep in another hook (effects / other
+              memos).
+            </li>
+            <li>
+              Preventing recreation of objects passed to context Provider
+              <code>value</code>.
+            </li>
+          </ol>
+
+          <h3><code>useRef</code></h3>
+          <ul>
+            <li>
+              Mutable box (<code>{ current: T }</code>) whose identity survives
+              renders.
+            </li>
+            <li>
+              Updating <code>ref.current</code> does not trigger a render.
+            </li>
+            <li>
+              Use for: DOM references, timer IDs, latest value snapshots,
+              imperative handles.
+            </li>
+          </ul>
+
+          <h3><code>useContext</code></h3>
+          <p>
+            Reads the nearest matching Provider. Every consumer re-renders
+            whenever the Provider's <code>value</code> reference changes. Common
+            trap: passing a fresh object literal each render invalidates every
+            consumer.
+          </p>
+          <pre><code class="language-tsx">// Every render passes a new object → all consumers re-render
+&lt;Ctx.Provider value={{ user, setUser }}&gt;
+
+// Memoize the value
+const value = useMemo(() =&gt; ({ user, setUser }), [user])
+&lt;Ctx.Provider value={value}&gt;</code></pre>
+        </section>
+
+        <section id="advanced-hooks">
+          <h2><span class="num">06</span>Advanced &amp; Custom Hooks</h2>
+          <h3>
+            <code>useTransition</code> &amp; <code>useDeferredValue</code>
+          </h3>
+          <p>
+            Both mark work as non-urgent. React can interrupt them to keep input
+            responsive.
+          </p>
+          <ul>
+            <li>
+              <code>useTransition</code> — you control which updates are
+              transitions via
+              <code>startTransition(() =&gt; setState(x))</code>.
+            </li>
+            <li>
+              <code>useDeferredValue(value)</code> — returns a lagged copy of
+              <code>value</code>. Great for filtering large lists as user types.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">const [query, setQuery] = useState('')
+const deferred = useDeferredValue(query)
+const results = useMemo(() =&gt; heavyFilter(items, deferred), [items, deferred])</code></pre>
+
+          <h3><code>useId</code></h3>
+          <p>
+            Generates stable, unique IDs that match between server and client
+            renders. Use for label/input associations, ARIA attributes. Never
+            use as a list key.
+          </p>
+
+          <h3><code>useSyncExternalStore</code></h3>
+          <p>
+            The hook for integrating with external stores (Redux, Zustand,
+            browser APIs like <code>matchMedia</code>). Concurrent-safe —
+            guarantees a consistent snapshot during a render.
+          </p>
+          <pre><code class="language-tsx">const subscribe = (cb: () =&gt; void) =&gt; {
+  const media = window.matchMedia('(prefers-color-scheme: dark)')
+  media.addEventListener('change', cb)
+  return () =&gt; media.removeEventListener('change', cb)
+}
+const getSnapshot = () =&gt; window.matchMedia('(prefers-color-scheme: dark)').matches
+const getServerSnapshot = () =&gt; false
+const isDark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)</code></pre>
+
+          <h3><code>useImperativeHandle</code></h3>
+          <p>
+            Customizes the instance value exposed to <code>ref</code>. Combined
+            with <code>forwardRef</code> (still needed pre-React 19; React 19
+            allows <code>ref</code> as a regular prop).
+          </p>
+          <pre><code class="language-tsx">const Input = forwardRef&lt;{ focus: () =&gt; void }, Props&gt;((props, ref) =&gt; {
+  const inner = useRef&lt;HTMLInputElement&gt;(null)
+  useImperativeHandle(ref, () =&gt; ({ focus: () =&gt; inner.current?.focus() }), [])
+  return &lt;input ref={inner} {...props} /&gt;
+})</code></pre>
+
+          <h3><code>useDebugValue</code></h3>
+          <p>
+            Adds a label for a custom hook in React DevTools. Zero runtime cost
+            in prod.
+          </p>
+
+          <h3>Custom hooks — the mental model</h3>
+          <p>
+            A custom hook is a function starting with <code>use</code> that
+            calls other hooks. It does not share state between components; each
+            call gets its own instance. Think of custom hooks as a way to
+            encapsulate a protocol, not to share state.
+          </p>
+          <pre><code class="language-tsx">function useDebounce&lt;T&gt;(value: T, delay = 300): T {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() =&gt; {
+    const id = setTimeout(() =&gt; setDebounced(value), delay)
+    return () =&gt; clearTimeout(id)
+  }, [value, delay])
+  return debounced
+}
+
+function useOnClickOutside(ref, handler) {
+  useEffect(() =&gt; {
+    const listener = (e) =&gt; {
+      if (!ref.current || ref.current.contains(e.target)) return
+      handler(e)
+    }
+    document.addEventListener('mousedown', listener)
+    document.addEventListener('touchstart', listener)
+    return () =&gt; {
+      document.removeEventListener('mousedown', listener)
+      document.removeEventListener('touchstart', listener)
+    }
+  }, [ref, handler])
+}
+
+function usePrevious&lt;T&gt;(value: T): T | undefined {
+  const ref = useRef&lt;T&gt;()
+  useEffect(() =&gt; { ref.current = value }, [value])
+  return ref.current
+}</code></pre>
+          <div class="callout ok">
+            <div class="label">Senior signal</div>
+            <p>
+              Great candidates spot the difference between composition (hooks +
+              components) and inheritance. They also know when a "custom hook"
+              is really just a utility function that doesn't need to be a hook.
+            </p>
+          </div>
+        </section>
+
+        <section id="fiber">
+          <h2>
+            <span class="num">07</span>Fiber &amp; Reconciliation
+            <span class="tag hot">Deep</span>
+          </h2>
+          <h3>Why Fiber exists</h3>
+          <p>
+            The legacy stack reconciler (pre-16) walked the tree recursively —
+            uninterruptible. Long trees blocked the main thread. Fiber
+            re-implements reconciliation as a linked-list of work units that can
+            be paused, resumed, aborted, and prioritized.
+          </p>
+
+          <h3>Fiber node structure (simplified)</h3>
+          <pre><code class="language-ts">interface Fiber {
+  type: string | Function                    // 'div' | Component
+  key: string | null
+  stateNode: HTMLElement | ComponentInstance // link to host or instance
+  child: Fiber | null                        // first child
+  sibling: Fiber | null                      // next sibling
+  return: Fiber | null                       // parent
+  pendingProps: any
+  memoizedProps: any
+  memoizedState: any                         // linked list of hooks!
+  alternate: Fiber | null                    // the other tree (current ↔ WIP)
+  flags: number                              // effect side-effect bitmask
+  lanes: number                              // priority bitmask
+}</code></pre>
+
+          <h3>Double buffering: current &amp; work-in-progress</h3>
+          <p>
+            React maintains two Fiber trees: the current (mounted) tree and the
+            work-in-progress tree. Updates build the WIP tree; on commit, the
+            pointers swap atomically — no partially rendered state is ever
+            visible.
+          </p>
+
+          <h3>Reconciliation algorithm (diffing)</h3>
+          <ul>
+            <li>Compare elements at the same position in the tree.</li>
+            <li>Different types → destroy subtree + mount new (state lost).</li>
+            <li>Same type → reuse instance, update props, recurse.</li>
+            <li>
+              For lists → match by <code>key</code>. Same key = same instance
+              regardless of position.
+            </li>
+          </ul>
+          <p>
+            Diffing is O(n) because React only compares same-level, same-type
+            nodes and assumes stable keys.
+          </p>
+
+          <h3>Lanes — the priority system</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Lane</th>
+                  <th>Example trigger</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SyncLane</td>
+                  <td><code>flushSync</code>, discrete input handlers</td>
+                </tr>
+                <tr>
+                  <td>InputContinuousLane</td>
+                  <td>Continuous events (mousemove, scroll)</td>
+                </tr>
+                <tr>
+                  <td>DefaultLane</td>
+                  <td>Normal updates outside transitions</td>
+                </tr>
+                <tr>
+                  <td>TransitionLane</td>
+                  <td>
+                    <code>startTransition</code>, <code>useDeferredValue</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>IdleLane</td>
+                  <td>Off-screen / <code>&lt;Offscreen&gt;</code> content</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Higher-priority lanes can interrupt lower ones. When user types
+            while a transition is rendering, React drops the WIP tree and
+            restarts with the newer input.
+          </p>
+
+          <h3>Hooks storage</h3>
+          <p>
+            Each Fiber's <code>memoizedState</code> holds a linked list of hook
+            records. <code>useState</code> stores
+            <code>{ baseState, queue, next }</code>;
+            <code>useEffect</code> stores tag + dep-array + create/destroy
+            functions. Call order matters because React advances a pointer
+            through this list on every render.
+          </p>
+        </section>
+
+        <section id="render-commit">
+          <h2><span class="num">08</span>Render &amp; Commit Phases</h2>
+          <h3>Two phases, one update</h3>
+          <div class="grid">
+            <div class="card">
+              <h4>1. Render phase</h4>
+              <p>
+                Pure. Builds the WIP tree. Can be interrupted, restarted, or
+                discarded. Must not have side effects.
+              </p>
+            </div>
+            <div class="card">
+              <h4>2. Commit phase</h4>
+              <p>
+                Synchronous. Applies DOM mutations, runs refs, layout effects,
+                then passive effects. Cannot be interrupted.
+              </p>
+            </div>
+          </div>
+
+          <h3>Effect ordering on commit</h3>
+          <ol>
+            <li>DOM mutations applied.</li>
+            <li>
+              <code>useLayoutEffect</code> cleanups (from previous render), then
+              setups. Synchronous.
+            </li>
+            <li>Refs attached / detached.</li>
+            <li>Browser paints.</li>
+            <li>
+              <code>useEffect</code> cleanups, then setups. Asynchronous, after
+              paint.
+            </li>
+          </ol>
+
+          <h3>When does a component re-render?</h3>
+          <ul>
+            <li>
+              Its own state changed (<code>useState</code>,
+              <code>useReducer</code>).
+            </li>
+            <li>
+              A parent re-rendered and it isn't memoized (or a memoized
+              comparison returned false).
+            </li>
+            <li>A context it subscribes to changed.</li>
+            <li>
+              An external store subscribed via
+              <code>useSyncExternalStore</code> emitted a new snapshot.
+            </li>
+            <li>
+              <code>forceUpdate</code> equivalent —
+              <code>useReducer</code> dispatch with a dummy action.
+            </li>
+          </ul>
+
+          <h3>Bail-outs — how React skips work</h3>
+          <ul>
+            <li>
+              Same state after <code>setState(x)</code> where
+              <code>Object.is(prev, x)</code> → child not re-rendered.
+            </li>
+            <li>
+              <code>React.memo</code> — shallow-equal props → skip render.
+            </li>
+            <li>
+              <code>PureComponent</code> (class) — shallow compare props and
+              state.
+            </li>
+            <li>
+              Same element identity in output — if you pass
+              <code>children</code> from a parent that didn't change, React
+              reuses them.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">// The `children` trick — Nav element created once and reused across App renders
+function App() {
+  const [count, setCount] = useState(0)
+  return &lt;Layout count={count} onInc={() =&gt; setCount((c) =&gt; c + 1)}&gt;&lt;Nav /&gt;&lt;/Layout&gt;
+}
+// Layout re-renders on count change; the &lt;Nav /&gt; child element passed in has
+// the same identity, so React bails out on Nav.</code></pre>
+        </section>
+
+        <section id="performance">
+          <h2>
+            <span class="num">09</span>Performance
+            <span class="tag hot">Hot</span>
+          </h2>
+          <h3>Diagnose before optimizing</h3>
+          <ol>
+            <li>
+              React DevTools Profiler — record an interaction, look at
+              flamegraph + "why did this render?".
+            </li>
+            <li>
+              Chrome Performance panel — find long tasks (&gt; 50ms), scripting
+              vs rendering vs layout.
+            </li>
+            <li>Lighthouse / Web Vitals — TTFB, LCP, CLS, INP.</li>
+            <li>
+              Bundle analyzer (source-map-explorer, webpack-bundle-analyzer) —
+              identify heavy deps.
+            </li>
+          </ol>
+
+          <h3>Rendering optimizations</h3>
+          <ul>
+            <li>
+              <strong>Break up components</strong> — smaller components =
+              smaller re-render boundaries.
+            </li>
+            <li>
+              <strong>Colocate state</strong> — move state down to where it's
+              used to avoid re-rendering unrelated siblings.
+            </li>
+            <li>
+              <strong>Move state up + pass children</strong> — components passed
+              as <code>children</code> won't re-render just because the wrapping
+              stateful parent did.
+            </li>
+            <li>
+              <strong><code>React.memo</code></strong> — for pure leaf
+              components that receive stable props.
+            </li>
+            <li>
+              <strong>Custom equality</strong> —
+              <code>React.memo(Comp, (prev, next) =&gt; ...)</code>. Use
+              sparingly.
+            </li>
+            <li>
+              <strong>Split contexts</strong> — rapidly-changing values (mouse
+              position) in their own context so slow consumers don't re-render.
+            </li>
+            <li>
+              <strong>Windowing / virtualization</strong> —
+              <code>react-window</code> / <code>react-virtualized</code> /
+              TanStack Virtual for 10k+ lists.
+            </li>
+          </ul>
+
+          <h3>Bundle optimizations</h3>
+          <ul>
+            <li>
+              <strong>Code split</strong> with <code>React.lazy</code> +
+              <code>&lt;Suspense&gt;</code>. Split by route, by feature, by
+              heavy widgets.
+            </li>
+            <li>
+              <strong>Tree-shake</strong> — import from ESM entry, avoid barrel
+              files that pull the world in.
+            </li>
+            <li>
+              <strong>Avoid heavy dependencies</strong> — moment.js →
+              date-fns/dayjs; lodash → per-function imports; big icon sets →
+              subset.
+            </li>
+            <li><strong>Compress</strong> — Brotli/gzip at the edge.</li>
+            <li>
+              <strong>Prefetch / preload</strong> —
+              <code>&lt;link rel="preload"&gt;</code>, route-level prefetch for
+              likely-next screens.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">const HeavyChart = lazy(() =&gt; import('./HeavyChart'))
+function Dashboard() {
+  return (
+    &lt;Suspense fallback={&lt;Skeleton /&gt;}&gt;
+      &lt;HeavyChart /&gt;
+    &lt;/Suspense&gt;
+  )
+}</code></pre>
+
+          <h3>Rendering big lists</h3>
+          <pre><code class="language-tsx">import { FixedSizeList } from 'react-window'
+
+function Rows({ items }: { items: string[] }) {
+  return (
+    &lt;FixedSizeList height={600} itemCount={items.length} itemSize={40} width="100%"&gt;
+      {({ index, style }) =&gt; &lt;div style={style}&gt;{items[index]}&lt;/div&gt;}
+    &lt;/FixedSizeList&gt;
+  )
+}</code></pre>
+
+          <h3>Concurrent rendering knobs</h3>
+          <ul>
+            <li>
+              <code>startTransition</code> — mark expensive updates as
+              interruptible.
+            </li>
+            <li>
+              <code>useDeferredValue</code> — lag heavy computations behind user
+              input.
+            </li>
+            <li>
+              <code>&lt;Suspense&gt;</code> — split rendering into streamed
+              chunks.
+            </li>
+          </ul>
+
+          <h3>Web Vitals for React apps</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>What it measures</th>
+                  <th>React levers</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LCP</td>
+                  <td>Largest content paint</td>
+                  <td>SSR/SSG, streaming, image priority</td>
+                </tr>
+                <tr>
+                  <td>INP</td>
+                  <td>Interaction latency (replaces FID)</td>
+                  <td>Concurrent transitions, avoid long tasks</td>
+                </tr>
+                <tr>
+                  <td>CLS</td>
+                  <td>Layout shift</td>
+                  <td>Reserve space, avoid late-mount content</td>
+                </tr>
+                <tr>
+                  <td>TTFB</td>
+                  <td>Time to first byte</td>
+                  <td>Edge SSR, cache HTML, prerender</td>
+                </tr>
+                <tr>
+                  <td>TBT / Long Tasks</td>
+                  <td>Main thread blocking</td>
+                  <td>Split bundles, offload to workers, defer</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout ok">
+            <div class="label">Interview framing</div>
+            <p>
+              Answer perf questions with a workflow, not a list of tricks: 1)
+              measure, 2) hypothesize, 3) fix the biggest offender, 4) measure
+              again. Interviewers reward candidates who resist the reflex to
+              sprinkle <code>useMemo</code> everywhere.
+            </p>
+          </div>
+        </section>
+
+        <section id="context">
+          <h2><span class="num">10</span>Context &amp; State Management</h2>
+          <h3>When to use each</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Solution</th>
+                  <th>Best for</th>
+                  <th>Caveat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Local state (<code>useState</code>)</td>
+                  <td>Component-scoped UI state</td>
+                  <td>Cannot share across siblings without lifting</td>
+                </tr>
+                <tr>
+                  <td>Lifted state</td>
+                  <td>2–3 related components</td>
+                  <td>Prop drilling past that gets painful</td>
+                </tr>
+                <tr>
+                  <td>Context</td>
+                  <td>Truly global, rarely-changing data (theme, user)</td>
+                  <td>All consumers re-render on value change</td>
+                </tr>
+                <tr>
+                  <td>Redux / Zustand / Jotai</td>
+                  <td>Cross-app, complex, high-frequency updates</td>
+                  <td>Extra concepts, boilerplate</td>
+                </tr>
+                <tr>
+                  <td>Server state libs (TanStack Query, SWR)</td>
+                  <td>Async data (fetching, caching, invalidation)</td>
+                  <td>Not for client-only state</td>
+                </tr>
+                <tr>
+                  <td>URL state</td>
+                  <td>Sharable / bookmarkable state (filters, tabs)</td>
+                  <td>String-typed; requires (de)serialization</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Context pitfalls</h3>
+          <ul>
+            <li>
+              Every consumer re-renders when <code>value</code> reference
+              changes — even if it reads only one field.
+            </li>
+            <li>
+              Splitting a monolithic context into narrow contexts (auth, theme,
+              session) is often the right refactor.
+            </li>
+            <li>
+              For selectively subscribing to slices of state, prefer
+              <code>useSyncExternalStore</code>-based libs (Zustand, Redux) or
+              <code>use-context-selector</code>.
+            </li>
+          </ul>
+
+          <h3>Redux (Toolkit) — the shortest possible mental model</h3>
+          <pre><code class="language-tsx">// slice
+const cart = createSlice({
+  name: 'cart',
+  initialState: { items: [] as Item[] },
+  reducers: {
+    add: (s, a: PayloadAction&lt;Item&gt;) =&gt; { s.items.push(a.payload) },  // Immer inside
+    remove: (s, a: PayloadAction&lt;string&gt;) =&gt; { s.items = s.items.filter(i =&gt; i.id !== a.payload) },
+  },
+})
+// store
+export const store = configureStore({ reducer: { cart: cart.reducer } })
+// component
+const items = useSelector((s: RootState) =&gt; s.cart.items)
+const dispatch = useDispatch()
+dispatch(cart.actions.add(item))</code></pre>
+
+          <h3>Zustand — minimal alternative</h3>
+          <pre><code class="language-tsx">const useCart = create&lt;{
+  items: Item[]
+  add: (i: Item) =&gt; void
+}&gt;((set) =&gt; ({
+  items: [],
+  add: (i) =&gt; set((s) =&gt; ({ items: [...s.items, i] })),
+}))
+// Fine-grained subscription — component only re-renders when items.length changes
+const count = useCart((s) =&gt; s.items.length)</code></pre>
+
+          <h3>Server state: TanStack Query</h3>
+          <p>
+            Server state is different: it can go stale, must be cached,
+            revalidated, and deduped across components. Do
+            <strong>not</strong> reinvent this with
+            <code>useEffect + useState</code>.
+          </p>
+          <pre><code class="language-tsx">const { data, isLoading, error } = useQuery({
+  queryKey: ['user', id],
+  queryFn: () =&gt; fetch(`/api/user/${id}`).then((r) =&gt; r.json()),
+  staleTime: 60_000,
+})</code></pre>
+        </section>
+
+        <section id="refs">
+          <h2><span class="num">11</span>Refs &amp; DOM</h2>
+          <h3>What refs are for</h3>
+          <ul>
+            <li>
+              Accessing DOM nodes (focus, measure, integrate with a non-React
+              library).
+            </li>
+            <li>
+              Storing mutable values that survive renders without triggering
+              renders.
+            </li>
+            <li>
+              Exposing an imperative API from a component (via
+              <code>useImperativeHandle</code>).
+            </li>
+          </ul>
+
+          <h3>Callback refs vs object refs</h3>
+          <pre><code class="language-tsx">// Object ref — most common
+const ref = useRef&lt;HTMLDivElement&gt;(null)
+&lt;div ref={ref} /&gt;
+
+// Callback ref — runs on mount/unmount; useful when you need to react to the node
+const setNode = useCallback((node: HTMLDivElement | null) =&gt; {
+  if (node) resizeObserver.observe(node)
+}, [])
+&lt;div ref={setNode} /&gt;</code></pre>
+
+          <h3>forwardRef (pre-React 19)</h3>
+          <pre><code class="language-tsx">const FancyInput = forwardRef&lt;HTMLInputElement, Props&gt;(({ label, ...rest }, ref) =&gt; (
+  &lt;label&gt;
+    {label}
+    &lt;input ref={ref} {...rest} /&gt;
+  &lt;/label&gt;
+))</code></pre>
+          <div class="callout warn">
+            <div class="label">React 19</div>
+            <p>
+              <code>forwardRef</code> is no longer needed. <code>ref</code> is a
+              regular prop on function components. Existing code keeps working;
+              new code can drop <code>forwardRef</code>.
+            </p>
+          </div>
+
+          <h3>Refs vs state — decision guide</h3>
+          <ul>
+            <li>
+              Does the UI need to re-render when it changes? →
+              <strong>state</strong>.
+            </li>
+            <li>
+              Do you need to preserve a value across renders without
+              re-rendering? → <strong>ref</strong>.
+            </li>
+            <li>
+              Do you need to read DOM measurements? → ref +
+              <code>useLayoutEffect</code>.
+            </li>
+          </ul>
+        </section>
+
+        <section id="errors">
+          <h2><span class="num">12</span>Error Boundaries</h2>
+          <h3>What they catch</h3>
+          <ul>
+            <li>
+              Errors thrown during rendering, in lifecycle methods, and in
+              constructors of the whole tree below.
+            </li>
+          </ul>
+          <h3>What they do NOT catch</h3>
+          <ul>
+            <li>Event handlers (use try/catch).</li>
+            <li>Asynchronous code (use try/catch or promise handlers).</li>
+            <li>Server-side rendering (use framework-specific mechanisms).</li>
+            <li>Errors thrown in the boundary itself.</li>
+          </ul>
+
+          <h3>Implementation</h3>
+          <pre><code class="language-tsx">class ErrorBoundary extends React.Component&lt;{ fallback: React.ReactNode }, { error: Error | null }&gt; {
+  state = { error: null as Error | null }
+  static getDerivedStateFromError(error: Error) { return { error } }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    reportToSentry(error, info)
+  }
+  render() {
+    return this.state.error ? this.props.fallback : this.props.children
+  }
+}
+
+&lt;ErrorBoundary fallback={&lt;ErrorFallback /&gt;}&gt;
+  &lt;Feature /&gt;
+&lt;/ErrorBoundary&gt;</code></pre>
+          <p>
+            In practice, use <code>react-error-boundary</code> — it exposes a
+            hook-friendly API, reset semantics, and fallback render props.
+          </p>
+          <div class="callout">
+            <div class="label">Pattern</div>
+            <p>
+              Wrap feature boundaries (route, dashboard tile, modal) rather than
+              the whole app. That way, a bug in one widget doesn't blank out the
+              entire screen.
+            </p>
+          </div>
+        </section>
+
+        <section id="suspense">
+          <h2>
+            <span class="num">13</span>Suspense &amp; Concurrent React
+            <span class="tag new">18/19</span>
+          </h2>
+          <h3>The Suspense contract</h3>
+          <p>
+            A component can suspend by throwing a promise. The nearest
+            <code>&lt;Suspense fallback&gt;</code> catches it, shows the
+            fallback, and re-renders when the promise resolves. Frameworks
+            (Next.js, Remix) and libraries (TanStack Query, Relay) integrate
+            with this contract.
+          </p>
+          <pre><code class="language-tsx">&lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
+  &lt;UserProfile id={id} /&gt;   {/* may suspend on data */}
+&lt;/Suspense&gt;</code></pre>
+
+          <h3>The <code>use()</code> hook (React 19)</h3>
+          <pre><code class="language-tsx">import { use } from 'react'
+function Comments({ commentsPromise }: { commentsPromise: Promise&lt;Comment[]&gt; }) {
+  const comments = use(commentsPromise)  // suspends until resolved
+  return &lt;ul&gt;{comments.map((c) =&gt; &lt;li key={c.id}&gt;{c.text}&lt;/li&gt;)}&lt;/ul&gt;
+}
+// Unlike other hooks, `use` can be called conditionally.</code></pre>
+
+          <h3>Concurrent features summary</h3>
+          <ul>
+            <li>
+              <strong>Automatic batching</strong> — updates in promises,
+              timeouts, native events are all batched into a single render.
+            </li>
+            <li>
+              <strong>Transitions</strong> — mark low-priority updates so urgent
+              ones (typing) stay responsive.
+            </li>
+            <li>
+              <strong>Streaming SSR</strong> — the server flushes HTML as parts
+              of the tree become ready.
+            </li>
+            <li>
+              <strong>Selective hydration</strong> — client hydrates ready
+              subtrees first; interacting with a not-yet-hydrated part
+              prioritizes its hydration.
+            </li>
+          </ul>
+
+          <h3>Concurrent mental model</h3>
+          <p>
+            Renders are now attempted; they can be discarded before commit.
+            Never rely on a render actually happening — do all real work in
+            commit (effects / event handlers). Ensure components are pure so
+            re-attempts are safe.
+          </p>
+        </section>
+
+        <section id="react-19">
+          <h2>
+            <span class="num">14</span>React 18 / 19 Features
+            <span class="tag new">New</span>
+          </h2>
+          <h3>React 18</h3>
+          <ul>
+            <li>
+              <code>createRoot</code> replaces <code>ReactDOM.render</code>.
+              Enables concurrent features.
+            </li>
+            <li>Automatic batching in async contexts.</li>
+            <li>
+              <code>useId</code>, <code>useTransition</code>,
+              <code>useDeferredValue</code>, <code>useSyncExternalStore</code>.
+            </li>
+            <li>
+              New Suspense SSR architecture (streaming + selective hydration).
+            </li>
+            <li>Strict Mode double-invoke of effects in dev.</li>
+          </ul>
+
+          <h3>React 19</h3>
+          <ul>
+            <li>
+              <strong>Actions</strong> — form actions and
+              <code>useActionState</code> replace many
+              <code>useState + onSubmit</code> patterns.
+            </li>
+            <li>
+              <strong><code>useOptimistic</code></strong> — declarative
+              optimistic UI while an action is pending.
+            </li>
+            <li>
+              <strong><code>useFormStatus</code></strong> — access
+              <code>pending</code>, <code>data</code>, <code>method</code>,
+              <code>action</code> from any child inside a
+              <code>&lt;form&gt;</code>.
+            </li>
+            <li>
+              <strong><code>use()</code> hook</strong> — read promises / context
+              inline, can appear in loops/conditions.
+            </li>
+            <li>
+              <strong><code>ref</code> as a prop</strong> — no more
+              <code>forwardRef</code>.
+            </li>
+            <li>
+              <strong>Document metadata</strong> — <code>&lt;title&gt;</code>,
+              <code>&lt;meta&gt;</code>, <code>&lt;link&gt;</code> in any
+              component are hoisted to <code>&lt;head&gt;</code>.
+            </li>
+            <li>
+              <strong>Preloading APIs</strong> — <code>preload</code>,
+              <code>preinit</code>, <code>prefetchDNS</code>,
+              <code>preconnect</code> from <code>react-dom</code>.
+            </li>
+            <li>
+              <strong>React Compiler</strong> — opt-in build tool that
+              auto-inserts memoization; fewer manual
+              <code>useMemo</code>/<code>useCallback</code>.
+            </li>
+            <li>
+              <strong>Improved hydration errors</strong> — single diff-style
+              message instead of a chain of console warnings.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">// React 19 form action + useActionState + useOptimistic
+function Likes({ initial }: { initial: number }) {
+  const [likes, addLike] = useActionState(async (prev: number) =&gt; {
+    await api.like()
+    return prev + 1
+  }, initial)
+  const [optimistic, addOptimistic] = useOptimistic(likes, (curr) =&gt; curr + 1)
+  return (
+    &lt;form action={() =&gt; { addOptimistic(); addLike() }}&gt;
+      &lt;button type="submit"&gt;❤ {optimistic}&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+        </section>
+
+        <section id="rsc">
+          <h2>
+            <span class="num">15</span>Server Components &amp; Actions
+            <span class="tag new">RSC</span>
+          </h2>
+          <h3>Mental model</h3>
+          <p>
+            React Server Components (RSC) run only on the server. They ship zero
+            JS to the client — only their serialized output. Client Components
+            (<code>"use client"</code>) run on both server (for initial HTML)
+            and client (for interactivity).
+          </p>
+
+          <h3>Server vs Client — capability matrix</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Capability</th>
+                  <th>Server</th>
+                  <th>Client</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>DB / filesystem access</td>
+                  <td>✅</td>
+                  <td>❌</td>
+                </tr>
+                <tr>
+                  <td>Secrets / env</td>
+                  <td>✅</td>
+                  <td>❌</td>
+                </tr>
+                <tr>
+                  <td><code>useState</code>, <code>useEffect</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                </tr>
+                <tr>
+                  <td>Event handlers</td>
+                  <td>❌</td>
+                  <td>✅</td>
+                </tr>
+                <tr>
+                  <td>Browser APIs</td>
+                  <td>❌</td>
+                  <td>✅</td>
+                </tr>
+                <tr>
+                  <td>Async component</td>
+                  <td>✅</td>
+                  <td>❌</td>
+                </tr>
+                <tr>
+                  <td>Ships JS to browser</td>
+                  <td>No</td>
+                  <td>Yes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Composition rules</h3>
+          <ul>
+            <li>
+              You cannot import a server component into a client component. Pass
+              as <code>children</code>.
+            </li>
+            <li>
+              Props crossing the boundary must be serializable (no functions, no
+              class instances). Dates and JSX work.
+            </li>
+            <li>
+              Server → Client is one-way. Client can't "call back" into the
+              server tree except via server actions.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">// server component
+import ClientTabs from './client-tabs'
+import ServerContent from './server-content'
+export default function Page() {
+  return &lt;ClientTabs&gt;&lt;ServerContent /&gt;&lt;/ClientTabs&gt;   // server child passed to client parent
+}</code></pre>
+
+          <h3>Server Actions</h3>
+          <pre><code class="language-tsx">// actions.ts
+'use server'
+export async function createPost(formData: FormData) {
+  const title = formData.get('title') as string
+  await db.post.create({ title })
+  revalidatePath('/blog')
+}
+
+// form.tsx (client)
+'use client'
+import { createPost } from './actions'
+export function Form() {
+  return (
+    &lt;form action={createPost}&gt;
+      &lt;input name="title" /&gt;
+      &lt;button&gt;Publish&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+          <div class="callout warn">
+            <div class="label">Security</div>
+            <p>
+              Server Actions are POST endpoints. Treat them like any API:
+              validate inputs (Zod), check authorization, guard against CSRF
+              (framework usually handles this via cookies + origin checks).
+            </p>
+          </div>
+        </section>
+
+        <section id="patterns">
+          <h2><span class="num">16</span>Design Patterns</h2>
+
+          <h3>Compound components</h3>
+          <p>
+            Multiple components that share implicit state via context to give a
+            flexible API.
+          </p>
+          <pre><code class="language-tsx">const TabsCtx = createContext&lt;{ active: string; set: (id: string) =&gt; void } | null&gt;(null)
+
+function Tabs({ defaultValue, children }: { defaultValue: string; children: React.ReactNode }) {
+  const [active, setActive] = useState(defaultValue)
+  const value = useMemo(() =&gt; ({ active, set: setActive }), [active])
+  return &lt;TabsCtx.Provider value={value}&gt;{children}&lt;/TabsCtx.Provider&gt;
+}
+Tabs.List = function List({ children }) { return &lt;div role="tablist"&gt;{children}&lt;/div&gt; }
+Tabs.Trigger = function Trigger({ id, children }) {
+  const ctx = useContext(TabsCtx)!
+  return &lt;button role="tab" aria-selected={ctx.active === id} onClick={() =&gt; ctx.set(id)}&gt;{children}&lt;/button&gt;
+}
+Tabs.Panel = function Panel({ id, children }) {
+  const ctx = useContext(TabsCtx)!
+  return ctx.active === id ? &lt;div role="tabpanel"&gt;{children}&lt;/div&gt; : null
+}
+
+// Usage
+&lt;Tabs defaultValue="a"&gt;
+  &lt;Tabs.List&gt;
+    &lt;Tabs.Trigger id="a"&gt;One&lt;/Tabs.Trigger&gt;
+    &lt;Tabs.Trigger id="b"&gt;Two&lt;/Tabs.Trigger&gt;
+  &lt;/Tabs.List&gt;
+  &lt;Tabs.Panel id="a"&gt;One panel&lt;/Tabs.Panel&gt;
+  &lt;Tabs.Panel id="b"&gt;Two panel&lt;/Tabs.Panel&gt;
+&lt;/Tabs&gt;</code></pre>
+
+          <h3>Render props / function children</h3>
+          <p>
+            Useful for headless components (Radix, Headless UI, TanStack Table).
+            Consumer controls markup; provider owns behavior.
+          </p>
+
+          <h3>Higher-order components (HOC)</h3>
+          <p>
+            Function that takes a component and returns a wrapped one. Common
+            historically (<code>connect</code>, <code>withRouter</code>). Prefer
+            hooks now; HOCs still work for cross-cutting concerns that can't be
+            a hook (e.g., class-based error boundary wrappers).
+          </p>
+
+          <h3>Provider pattern</h3>
+          <p>
+            Encapsulate context + state + actions in a single component.
+            Consumers use a matching hook.
+          </p>
+          <pre><code class="language-tsx">const AuthCtx = createContext&lt;Auth | null&gt;(null)
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState&lt;User | null&gt;(null)
+  const value = useMemo(() =&gt; ({ user, login: setUser, logout: () =&gt; setUser(null) }), [user])
+  return &lt;AuthCtx.Provider value={value}&gt;{children}&lt;/AuthCtx.Provider&gt;
+}
+export function useAuth() {
+  const ctx = useContext(AuthCtx)
+  if (!ctx) throw new Error('useAuth must be inside AuthProvider')
+  return ctx
+}</code></pre>
+
+          <h3>State reducer pattern</h3>
+          <p>
+            Consumer passes a reducer override to a component so they can
+            intercept internal state transitions. Popularized by Kent C. Dodds'
+            <code>downshift</code>.
+          </p>
+
+          <h3>Controlled vs uncontrolled components</h3>
+          <ul>
+            <li>
+              <strong>Controlled</strong> — parent owns value via
+              <code>value</code> + <code>onChange</code>. Easier to validate;
+              can lag on rapid input.
+            </li>
+            <li>
+              <strong>Uncontrolled</strong> — DOM owns value; read via ref or on
+              submit. Cheaper for large forms.
+            </li>
+            <li>
+              <strong>Hybrid</strong> — <code>defaultValue</code> initializes,
+              then form library manages via refs.
+            </li>
+          </ul>
+
+          <h3>Container / Presentational (legacy, still useful)</h3>
+          <p>
+            Split components into "smart" (data-fetching, stateful) and "dumb"
+            (pure UI). Improves testability. Today, custom hooks usually replace
+            the container.
+          </p>
+        </section>
+
+        <section id="forms">
+          <h2><span class="num">17</span>Forms &amp; Validation</h2>
+
+          <h3>Controlled form (small)</h3>
+          <pre><code class="language-tsx">function Login() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const onSubmit = async (e: React.FormEvent) =&gt; {
+    e.preventDefault()
+    await api.login({ email, password })
+  }
+  return (
+    &lt;form onSubmit={onSubmit}&gt;
+      &lt;input type="email" value={email} onChange={(e) =&gt; setEmail(e.target.value)} /&gt;
+      &lt;input type="password" value={password} onChange={(e) =&gt; setPassword(e.target.value)} /&gt;
+      &lt;button&gt;Sign in&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+          <h3>Large form — <code>react-hook-form</code> + Zod</h3>
+          <pre><code class="language-tsx">const Schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+})
+type FormData = z.infer&lt;typeof Schema&gt;
+
+function Login() {
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm&lt;FormData&gt;({
+    resolver: zodResolver(Schema),
+  })
+  return (
+    &lt;form onSubmit={handleSubmit(async (data) =&gt; api.login(data))}&gt;
+      &lt;input {...register('email')} /&gt;
+      {errors.email &amp;&amp; &lt;p&gt;{errors.email.message}&lt;/p&gt;}
+      &lt;input type="password" {...register('password')} /&gt;
+      {errors.password &amp;&amp; &lt;p&gt;{errors.password.message}&lt;/p&gt;}
+      &lt;button disabled={isSubmitting}&gt;Sign in&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}</code></pre>
+
+          <h3>Validation trade-offs</h3>
+          <ul>
+            <li>
+              <strong>Schema (Zod, Yup, Valibot)</strong> — single source of
+              truth, runtime + type-safe, reusable server-side.
+            </li>
+            <li>
+              <strong>HTML5 <code>required</code>/<code>pattern</code></strong>
+              — free, but limited UX and hard to customize errors.
+            </li>
+            <li>
+              <strong>Custom per-field validators</strong> — flexible but
+              sprawls across the codebase.
+            </li>
+          </ul>
+
+          <h3>Debounced async validation</h3>
+          <pre><code class="language-tsx">const [username, setUsername] = useState('')
+const debounced = useDebounce(username, 400)
+const { data: available } = useQuery({
+  queryKey: ['username', debounced],
+  queryFn: () =&gt; api.checkUsername(debounced),
+  enabled: debounced.length &gt;= 3,
+})</code></pre>
+
+          <h3>Field arrays &amp; wizards</h3>
+          <p>
+            For nested repeatable fields (e.g. line items), use
+            <code>useFieldArray</code> from RHF. For multi-step wizards, prefer
+            a reducer + URL state so refresh doesn't lose progress.
+          </p>
+        </section>
+
+        <section id="testing">
+          <h2><span class="num">18</span>Testing</h2>
+          <h3>Testing pyramid for a React app</h3>
+          <ul>
+            <li>
+              <strong>Unit</strong> — pure functions, reducers, custom hooks
+              (<code>@testing-library/react</code> <code>renderHook</code>).
+            </li>
+            <li>
+              <strong>Component / integration</strong> — render user-facing
+              components with RTL, mock at the network layer with MSW.
+            </li>
+            <li>
+              <strong>End-to-end</strong> — Playwright / Cypress. Cover critical
+              flows only.
+            </li>
+            <li>
+              <strong>Visual regression</strong> — Chromatic / Percy for design
+              systems.
+            </li>
+          </ul>
+
+          <h3>Testing Library principles</h3>
+          <ul>
+            <li>
+              Query by <strong>accessible role and name</strong> first, then
+              label, then text. Avoid <code>data-testid</code>.
+            </li>
+            <li>
+              Simulate real user with <code>userEvent</code> (typing, clicking,
+              keyboard).
+            </li>
+            <li>
+              Assert what the user sees, not implementation details (never
+              inspect state or props).
+            </li>
+          </ul>
+          <pre><code class="language-tsx">import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+test('increments counter', async () =&gt; {
+  render(&lt;Counter /&gt;)
+  await userEvent.click(screen.getByRole('button', { name: /increment/i }))
+  expect(screen.getByText('Count: 1')).toBeInTheDocument()
+})</code></pre>
+
+          <h3>Mocking network with MSW</h3>
+          <pre><code class="language-tsx">const server = setupServer(
+  http.get('/api/user/:id', ({ params }) =&gt; HttpResponse.json({ id: params.id, name: 'Ada' }))
+)
+beforeAll(() =&gt; server.listen())
+afterEach(() =&gt; server.resetHandlers())
+afterAll(() =&gt; server.close())</code></pre>
+
+          <h3>Async assertions</h3>
+          <pre><code class="language-tsx">// Wait for element that appears async
+expect(await screen.findByText('Ada')).toBeInTheDocument()
+
+// Wait for state where a value becomes something
+await waitFor(() =&gt; expect(screen.queryByText(/loading/i)).not.toBeInTheDocument())</code></pre>
+
+          <h3>Custom hook tests</h3>
+          <pre><code class="language-tsx">import { renderHook, act } from '@testing-library/react'
+test('useCounter', () =&gt; {
+  const { result } = renderHook(() =&gt; useCounter(0))
+  act(() =&gt; result.current.increment())
+  expect(result.current.count).toBe(1)
+})</code></pre>
+        </section>
+
+        <section id="a11y">
+          <h2><span class="num">19</span>Accessibility</h2>
+          <h3>Non-negotiables</h3>
+          <ul>
+            <li>
+              Use <strong>semantic HTML</strong> first: <code>button</code>,
+              <code>a</code>, <code>label</code>, <code>nav</code>,
+              <code>main</code>. Do not build a button out of a
+              <code>div</code>.
+            </li>
+            <li>
+              Every interactive element must be
+              <strong>keyboard operable</strong>:
+              <code>Enter</code>/<code>Space</code>, arrow keys for composite
+              widgets.
+            </li>
+            <li>
+              Provide <strong>visible focus rings</strong>. Never
+              <code>outline: none</code> without a replacement.
+            </li>
+            <li>
+              Associate <code>&lt;label&gt;</code> with inputs —
+              <code>htmlFor</code> + <code>id</code> or wrapping.
+            </li>
+            <li>
+              Use <strong>ARIA sparingly</strong>: only when semantic HTML can't
+              express the pattern (tabs, combobox, tree). Never overuse.
+            </li>
+          </ul>
+
+          <h3>Live regions &amp; announcements</h3>
+          <pre><code class="language-tsx">// Announce async status to screen readers
+&lt;div role="status" aria-live="polite"&gt;{isLoading ? 'Loading…' : ''}&lt;/div&gt;</code></pre>
+
+          <h3>Focus management</h3>
+          <ul>
+            <li>Return focus to the trigger when closing a modal.</li>
+            <li>
+              Trap focus inside modals (or use <code>&lt;dialog&gt;</code> with
+              <code>showModal()</code>).
+            </li>
+            <li>Skip links for keyboard users to bypass repeated nav.</li>
+          </ul>
+
+          <h3>Tooling</h3>
+          <ul>
+            <li>
+              <code>eslint-plugin-jsx-a11y</code> — catches common issues at
+              lint time.
+            </li>
+            <li>
+              <code>@axe-core/react</code> — runtime audits in development.
+            </li>
+            <li>
+              Test with <strong>screen readers</strong> (VoiceOver, NVDA), not
+              just automated tools.
+            </li>
+          </ul>
+        </section>
+
+        <section id="security">
+          <h2><span class="num">20</span>Security</h2>
+
+          <h3>Cross-site scripting (XSS)</h3>
+          <ul>
+            <li>
+              React escapes text children by default — this is your first line
+              of defense.
+            </li>
+            <li>
+              <code>dangerouslySetInnerHTML</code> bypasses that. Sanitize
+              server-side or with DOMPurify before using.
+            </li>
+            <li>
+              URLs from user input in <code>href</code>/<code>src</code>: reject
+              <code>javascript:</code> schemes.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">// Safe: React escapes braces
+&lt;p&gt;{userInput}&lt;/p&gt;
+
+// Dangerous — sanitize first
+&lt;p dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }} /&gt;</code></pre>
+
+          <h3>CSRF</h3>
+          <ul>
+            <li>
+              SameSite cookies (default Lax in modern browsers) mitigate most
+              CSRF for form POSTs.
+            </li>
+            <li>
+              For non-idempotent APIs, require a custom header or CSRF token.
+            </li>
+            <li>
+              Server actions in RSC frameworks bundle CSRF protections by
+              default.
+            </li>
+          </ul>
+
+          <h3>Authentication</h3>
+          <ul>
+            <li>
+              Store tokens in
+              <strong>HttpOnly, Secure, SameSite cookies</strong>. Avoid
+              <code>localStorage</code> for auth tokens — vulnerable to XSS.
+            </li>
+            <li>
+              Use short-lived access tokens + refresh tokens with rotation.
+            </li>
+            <li>
+              Never render secrets in client bundles. Anything imported from a
+              <code>"use client"</code> file becomes public.
+            </li>
+          </ul>
+
+          <h3>Content Security Policy</h3>
+          <p>
+            Set a strict CSP. React's inline event handlers do not use inline
+            scripts, so <code>unsafe-inline</code> is not required for React
+            itself. Watch for third-party widgets that inject inline scripts.
+          </p>
+
+          <h3>Dependencies</h3>
+          <ul>
+            <li>
+              Run <code>npm audit</code> / <code>pnpm audit</code>, Snyk, or
+              Dependabot on PRs.
+            </li>
+            <li>Pin dependencies. Lock files must be committed.</li>
+            <li>
+              Audit any dep that touches <code>dangerouslySetInnerHTML</code> or
+              eval-like patterns.
+            </li>
+          </ul>
+        </section>
+
+        <section id="ts">
+          <h2><span class="num">21</span>TypeScript with React</h2>
+          <h3>Props typing</h3>
+          <pre><code class="language-tsx">// Prefer type over interface for component props
+type ButtonProps = {
+  variant?: 'primary' | 'secondary'
+  size?: 'sm' | 'md' | 'lg'
+  children: React.ReactNode
+} &amp; React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt;
+
+export function Button({ variant = 'primary', size = 'md', ...rest }: ButtonProps) {
+  return &lt;button data-variant={variant} data-size={size} {...rest} /&gt;
+}</code></pre>
+
+          <h3>Common utility types</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Use</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>React.ReactNode</code></td>
+                  <td>Anything renderable (recommended for children)</td>
+                </tr>
+                <tr>
+                  <td><code>React.ReactElement</code></td>
+                  <td>Specifically a JSX element</td>
+                </tr>
+                <tr>
+                  <td><code>React.ComponentProps&lt;typeof X&gt;</code></td>
+                  <td>Steal props of another component</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code>React.ComponentPropsWithoutRef&lt;'button'&gt;</code>
+                  </td>
+                  <td>Native element props, without <code>ref</code></td>
+                </tr>
+                <tr>
+                  <td><code>React.CSSProperties</code></td>
+                  <td>Inline style objects</td>
+                </tr>
+                <tr>
+                  <td><code>React.FormEvent&lt;HTMLFormElement&gt;</code></td>
+                  <td>Typed synthetic events</td>
+                </tr>
+                <tr>
+                  <td>
+                    <code
+                      >React.Dispatch&lt;React.SetStateAction&lt;T&gt;&gt;</code
+                    >
+                  </td>
+                  <td>Type for a setState prop</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Discriminated unions for variants</h3>
+          <pre><code class="language-tsx">type Toast =
+  | { kind: 'success'; message: string }
+  | { kind: 'error'; message: string; error: Error }
+  | { kind: 'loading' }
+
+function ToastView(t: Toast) {
+  switch (t.kind) {
+    case 'success': return &lt;p&gt;{t.message}&lt;/p&gt;
+    case 'error': return &lt;p&gt;{t.message}: {t.error.message}&lt;/p&gt;
+    case 'loading': return &lt;Spinner /&gt;
+  }
+}</code></pre>
+
+          <h3>Generic components &amp; hooks</h3>
+          <pre><code class="language-tsx">function List&lt;T&gt;({ items, render }: { items: T[]; render: (item: T) =&gt; React.ReactNode }) {
+  return &lt;ul&gt;{items.map((i, idx) =&gt; &lt;li key={idx}&gt;{render(i)}&lt;/li&gt;)}&lt;/ul&gt;
+}
+
+function useLocalStorage&lt;T&gt;(key: string, initial: T) {
+  const [value, setValue] = useState&lt;T&gt;(() =&gt; {
+    const raw = localStorage.getItem(key)
+    return raw ? (JSON.parse(raw) as T) : initial
+  })
+  useEffect(() =&gt; { localStorage.setItem(key, JSON.stringify(value)) }, [key, value])
+  return [value, setValue] as const
+}</code></pre>
+
+          <h3>Avoid these TypeScript smells</h3>
+          <ul>
+            <li>
+              <code>React.FC</code> — deprecated in the community; hides
+              <code>children</code> semantics and adds an implicit prop.
+            </li>
+            <li>
+              <code>any</code> anywhere — use <code>unknown</code> + narrowing.
+            </li>
+            <li>
+              Overuse of <code>as</code> — real fix is usually a type guard.
+            </li>
+            <li>
+              Optional props masquerading as required — use discriminated unions
+              instead.
+            </li>
+          </ul>
+        </section>
+
+        <section id="pitfalls">
+          <h2><span class="num">22</span>Pitfalls &amp; Bugs</h2>
+
+          <h3>Stale closures in effects</h3>
+          <pre><code class="language-tsx">// Bug — reads count from first render forever
+useEffect(() =&gt; {
+  const id = setInterval(() =&gt; console.log(count), 1000)
+  return () =&gt; clearInterval(id)
+}, [])  // missing count
+
+// Fixes: include count in deps, OR use ref, OR use updater form of setState</code></pre>
+
+          <h3>Infinite render loop</h3>
+          <pre><code class="language-tsx">// Bug — new object every render → effect runs every render → setState → new object…
+useEffect(() =&gt; { setData({ ...data, updatedAt: Date.now() }) }, [data])
+
+// Fix: only depend on what actually changed; or use a ref for the "did I run" flag</code></pre>
+
+          <h3>Missing deps warning — never suppress blindly</h3>
+          <p>
+            The exhaustive-deps rule is right ~95% of the time. If you truly
+            need to skip a dep, use a ref (<code>useLatestRef</code>) rather
+            than <code>// eslint-disable-next-line</code>.
+          </p>
+
+          <h3>Reading state right after setting</h3>
+          <pre><code class="language-tsx">// setCount schedules; the next line still sees the old value
+setCount(count + 1)
+console.log(count) // old</code></pre>
+
+          <h3>Fetching in render</h3>
+          <p>
+            Never call <code>fetch()</code> at the top of a component body.
+            Effects, event handlers, or dedicated data libraries only.
+          </p>
+
+          <h3>Mutating state directly</h3>
+          <pre><code class="language-tsx">state.list.push(x)         // Bug — same reference, no re-render
+setState({ ...state, list: [...state.list, x] })  // Correct</code></pre>
+
+          <h3>Overusing <code>useEffect</code></h3>
+          <ul>
+            <li>
+              Setting state from props → derive it, or reset with a
+              <code>key</code>.
+            </li>
+            <li>Kicking off derived data → use <code>useMemo</code>.</li>
+            <li>
+              Chained cascading effects → coalesce into one, or use a reducer.
+            </li>
+            <li>
+              Notifying parents → do it in the event handler that caused the
+              change.
+            </li>
+          </ul>
+
+          <h3>Hydration mismatches</h3>
+          <p>
+            Server-rendered HTML must match the client's first render. Common
+            causes: <code>Date.now()</code>, <code>Math.random()</code>,
+            user-locale formatting, or reading <code>window</code> during
+            render. Guard with <code>useSyncExternalStore</code> or defer to
+            <code>useEffect</code>.
+          </p>
+
+          <h3>Memoizing everything</h3>
+          <p>
+            Memoization has a cost. If children are cheap and props aren't
+            referentially unstable dependencies elsewhere,
+            <code>React.memo</code> can be a pessimization.
+          </p>
+        </section>
+
+        <section id="coding">
+          <h2>
+            <span class="num">23</span>Coding Challenges
+            <span class="tag hot">Practice</span>
+          </h2>
+          <p>
+            Practice implementing these live within 30–45 minutes each. Assume
+            no libraries.
+          </p>
+
+          <details class="qa">
+            <summary>
+              Debounced search input with race-condition-safe results
+            </summary>
+            <div class="qa-body">
+              <pre><code class="language-tsx">function SearchBox({ onSearch }: { onSearch: (q: string) =&gt; Promise&lt;Result[]&gt; }) {
+  const [q, setQ] = useState('')
+  const [results, setResults] = useState&lt;Result[]&gt;([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() =&gt; {
+    if (!q) { setResults([]); return }
+    const controller = new AbortController()
+    const id = setTimeout(async () =&gt; {
+      setLoading(true)
+      try {
+        const r = await onSearch(q)     // real impl would pass controller.signal
+        setResults(r)
+      } catch (e) {
+        if ((e as Error).name !== 'AbortError') setResults([])
+      } finally {
+        setLoading(false)
+      }
+    }, 300)
+    return () =&gt; { clearTimeout(id); controller.abort() }
+  }, [q, onSearch])
+
+  return (
+    &lt;div&gt;
+      &lt;input value={q} onChange={(e) =&gt; setQ(e.target.value)} aria-label="Search" /&gt;
+      {loading &amp;&amp; &lt;p&gt;Loading…&lt;/p&gt;}
+      &lt;ul&gt;{results.map((r) =&gt; &lt;li key={r.id}&gt;{r.title}&lt;/li&gt;)}&lt;/ul&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+              <p>
+                <strong>Discussion points:</strong> AbortController for
+                cancellation, cleanup for stale closures, debounce timer,
+                loading state.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Autocomplete / typeahead with keyboard navigation</summary>
+            <div class="qa-body">
+              <p>
+                Requirements: arrow up/down to move highlight, Enter to select,
+                Escape to close, click-outside to close, ARIA-compliant. Split
+                state: query, options, activeIndex, isOpen. Handle keyboard
+                events on the input; render options list with
+                <code>role="listbox"</code>, options with
+                <code>role="option"</code> and <code>aria-selected</code>. Track
+                active descendant via <code>aria-activedescendant</code>.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Infinite scroll with IntersectionObserver</summary>
+            <div class="qa-body">
+              <pre><code class="language-tsx">function useInfinite&lt;T&gt;(fetchPage: (page: number) =&gt; Promise&lt;T[]&gt;) {
+  const [items, setItems] = useState&lt;T[]&gt;([])
+  const [page, setPage] = useState(1)
+  const [done, setDone] = useState(false)
+  const sentinel = useRef&lt;HTMLDivElement&gt;(null)
+
+  useEffect(() =&gt; {
+    let cancelled = false
+    fetchPage(page).then((newItems) =&gt; {
+      if (cancelled) return
+      if (newItems.length === 0) setDone(true)
+      else setItems((prev) =&gt; [...prev, ...newItems])
+    })
+    return () =&gt; { cancelled = true }
+  }, [page, fetchPage])
+
+  useEffect(() =&gt; {
+    if (done || !sentinel.current) return
+    const io = new IntersectionObserver(([entry]) =&gt; {
+      if (entry.isIntersecting) setPage((p) =&gt; p + 1)
+    })
+    io.observe(sentinel.current)
+    return () =&gt; io.disconnect()
+  }, [done])
+
+  return { items, sentinel, done }
+}</code></pre>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Modal component with focus trap &amp; portal</summary>
+            <div class="qa-body">
+              <p>
+                Use <code>createPortal</code> to render into
+                <code>document.body</code>. On open: remember active element,
+                focus first tabbable inside, listen for <code>Escape</code>,
+                trap Tab within the modal. On close: restore focus. Wrap
+                contents in <code>role="dialog"</code> +
+                <code>aria-modal="true"</code> + <code>aria-labelledby</code>.
+                Consider using native <code>&lt;dialog&gt;</code> with
+                <code>showModal()</code> — free focus trap.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Tic-tac-toe with move history (Meta favorite)</summary>
+            <div class="qa-body">
+              <p>
+                Board = array of 9 squares. Store history of boards, not just
+                current — enables time travel. Compute winner as a derived value
+                each render, not stored. Immutable updates (<code>slice</code>
+                instead of mutation). Toggle player from history length parity.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>
+              Custom <code>useFetch</code> with cancellation and caching
+            </summary>
+            <div class="qa-body">
+              <p>
+                Design constraints: dedupe in-flight requests, cache successful
+                responses in a Map, expose
+                <code>{ data, error, isLoading, refetch }</code>, cancel on
+                unmount, invalidate on key change. Discuss trade-offs of
+                building this vs using TanStack Query.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Stopwatch / timer</summary>
+            <div class="qa-body">
+              <p>
+                Store <code>startTime</code> in a ref; compute elapsed each
+                render from <code>Date.now() - startTime</code>; force render
+                every 100ms via a state tick. Avoids drift from accumulating
+                <code>setInterval</code> ticks.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Nested comment thread (Reddit-style)</summary>
+            <div class="qa-body">
+              <p>
+                Recursive component that renders itself for children. Stable
+                keys per comment id. Discuss deep trees: potential for stack
+                overflow on very deep recursion → flatten to a list with indent
+                level, or virtualize.
+              </p>
+            </div>
+          </details>
+        </section>
+
+        <section id="system-design">
+          <h2>
+            <span class="num">24</span>System Design (Frontend)
+            <span class="tag hot">Bar-raiser</span>
+          </h2>
+          <p>
+            Bar-raiser interviews at Google / Meta / Netflix nearly always end
+            with a frontend system design. Framework:
+            <strong
+              >clarify → plan → data → components → state → APIs → performance →
+              trade-offs</strong
+            >.
+          </p>
+
+          <h3>Common prompts</h3>
+          <div class="grid">
+            <div class="card">
+              <h4>News feed (Meta)</h4>
+              <p>
+                Infinite scroll, live updates, image/video, optimistic
+                reactions.
+              </p>
+            </div>
+            <div class="card">
+              <h4>Google Docs (Google)</h4>
+              <p>Collaborative text, CRDT/OT, cursors, offline, undo/redo.</p>
+            </div>
+            <div class="card">
+              <h4>Video player (Netflix)</h4>
+              <p>Adaptive bitrate, controls UI, subtitles, error recovery.</p>
+            </div>
+            <div class="card">
+              <h4>Autocomplete search</h4>
+              <p>Debounce, cache, race-safe, keyboard nav, RTL/i18n.</p>
+            </div>
+            <div class="card">
+              <h4>Design system / component lib</h4>
+              <p>API surface, theming, a11y, docs, versioning.</p>
+            </div>
+            <div class="card">
+              <h4>E-commerce PDP</h4>
+              <p>Perf-critical LCP, hydration, ratings, cart mutation.</p>
+            </div>
+          </div>
+
+          <h3>Walk-through: News feed</h3>
+          <ol>
+            <li>
+              <strong>Clarify</strong>: platform, expected scale, media types,
+              real-time?, offline?, i18n/RTL, target metrics (INP, LCP).
+            </li>
+            <li>
+              <strong>Rendering strategy</strong>: SSR shell + streaming;
+              hydrate above-the-fold immediately; lazy-hydrate the rest.
+            </li>
+            <li>
+              <strong>Data</strong>: cursor-based pagination, server-defined
+              <code>next</code> cursor; deduplicate on merge. Live updates via
+              websocket or SSE — buffer to avoid layout thrash.
+            </li>
+            <li>
+              <strong>Component tree</strong>: <code>Feed</code> (owns cursor +
+              list), <code>Post</code> (memoized, receives stable props),
+              <code>Reactions</code> (optimistic),
+              <code>MediaViewer</code> (portal, lazy).
+            </li>
+            <li>
+              <strong>State</strong>: server state via TanStack Query (or RSC);
+              ephemeral UI state local; global UI state (auth, theme) via
+              context.
+            </li>
+            <li>
+              <strong>Performance</strong>: virtualize the list; preload next
+              page when 3 items from bottom; images with
+              <code>loading="lazy"</code> and correct <code>sizes</code>; defer
+              non-critical scripts; debounce reaction bursts.
+            </li>
+            <li>
+              <strong>Accessibility</strong>: focus management on new items,
+              live-region announcements for "N new posts", captions for video.
+            </li>
+            <li>
+              <strong>Failure modes</strong>: retry with backoff; show inline
+              error per post; fall back to cached content.
+            </li>
+            <li>
+              <strong>Instrumentation</strong>: LCP, INP, hydration timing, feed
+              scroll depth, error rate.
+            </li>
+            <li>
+              <strong>Trade-offs</strong>: virtualization vs SEO; websocket vs
+              polling; SSR cost vs freshness.
+            </li>
+          </ol>
+
+          <h3>Real-time editor (collaborative)</h3>
+          <ul>
+            <li>
+              <strong>Conflict model</strong>: CRDT (Yjs, Automerge) preferred
+              for offline; OT (Google Docs) for centralized.
+            </li>
+            <li>
+              <strong>Presence</strong>: cursor + selection broadcast on a
+              separate low-latency channel.
+            </li>
+            <li>
+              <strong>Persistence</strong>: local IndexedDB for offline;
+              periodic snapshot to server.
+            </li>
+            <li>
+              <strong>Undo/redo</strong>: per-user stacks; must respect remote
+              ops.
+            </li>
+            <li>
+              <strong>Optimistic + eventual consistency</strong>: local changes
+              apply immediately; server confirms.
+            </li>
+          </ul>
+
+          <h3>Design system architecture</h3>
+          <ul>
+            <li>
+              Token layer (colors, spacing, typography) → primitives → composed
+              components → recipes.
+            </li>
+            <li>
+              Headless behavior (Radix) + styled shell — swap the shell per
+              product.
+            </li>
+            <li>Accessibility baked into primitives, not an afterthought.</li>
+            <li>
+              Docs (Storybook) with a11y tests, visual regression, and Code
+              Connect.
+            </li>
+            <li>
+              Semver + changesets; deprecate with runtime warnings before
+              removing.
+            </li>
+          </ul>
+
+          <div class="callout ok">
+            <div class="label">Bar-raiser tip</div>
+            <p>
+              What separates senior from staff is quantifying the answer: "we
+              cap the list at 100 rendered nodes, so scrolling stays under 8ms
+              per frame at 120Hz"; "we prefetch the next page at 80% scroll
+              depth, giving an average 200ms buffer before the user hits the
+              bottom". Speak in numbers.
+            </p>
+          </div>
+        </section>
+
+        <section id="rapid-fire">
+          <h2><span class="num">25</span>Rapid-Fire Q&amp;A</h2>
+
+          <details class="qa">
+            <summary>
+              What is the difference between an element and a component?
+            </summary>
+            <div class="qa-body">
+              <p>
+                A component is a function (or class) that returns UI. An element
+                is the object returned by JSX / <code>createElement</code> that
+                describes what to render: <code>{ type, props, key }</code>.
+                Elements are immutable and cheap; components are the recipe.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Why do keys matter?</summary>
+            <div class="qa-body">
+              <p>
+                They let React match list items across renders. Without stable
+                keys, React matches by position and mistakes reorders for
+                updates — corrupting state, focus, and animations.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary><code>useMemo</code> vs <code>React.memo</code>?</summary>
+            <div class="qa-body">
+              <p>
+                <code>useMemo</code> memoizes a value inside a component.
+                <code>React.memo</code> memoizes a component's render given its
+                props. They solve different problems and are often used
+                together.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>What triggers a re-render?</summary>
+            <div class="qa-body">
+              <p>
+                Own state change, parent re-render (unless memoized +
+                shallow-equal props), context change, external store change, or
+                forced dispatch. Prop reference changes matter — objects/arrays
+                created inline in the parent create new references each render.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>What is Strict Mode?</summary>
+            <div class="qa-body">
+              <p>
+                A dev-only wrapper that intentionally double-invokes render,
+                constructor, and effect setup/cleanup, and surfaces deprecation
+                warnings. Its goal: shake out impure components and
+                non-idempotent effects before concurrent features hit them in
+                production. Does nothing in prod builds.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>
+              Difference between <code>useEffect</code> and
+              <code>useLayoutEffect</code>?
+            </summary>
+            <div class="qa-body">
+              <p>
+                <code>useEffect</code> runs asynchronously after paint.
+                <code>useLayoutEffect</code> runs synchronously after DOM
+                mutations but before paint. Use layout effect only when you must
+                read the DOM and apply a compensating change without flashes.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Controlled vs uncontrolled components?</summary>
+            <div class="qa-body">
+              <p>
+                Controlled: parent owns value via
+                <code>value</code>/<code>onChange</code>. Uncontrolled: DOM owns
+                the value, read via a ref or on submit. Controlled is easier to
+                validate; uncontrolled is cheaper for very large forms.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>What does <code>startTransition</code> do?</summary>
+            <div class="qa-body">
+              <p>
+                Marks a state update as non-urgent. React can pause / interrupt
+                / re-order it so urgent updates (typing) stay responsive.
+                Returns <code>[isPending, startTransition]</code> from
+                <code>useTransition</code>.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Why does React use synthetic events?</summary>
+            <div class="qa-body">
+              <p>
+                Cross-browser normalization, event pooling (until React 17
+                dropped it), and a single delegated listener at the root —
+                cheaper than many DOM listeners for large trees. Since React 17
+                the listener is on the root container, not
+                <code>document</code>.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>What are portals?</summary>
+            <div class="qa-body">
+              <p>
+                A way to render children into a DOM node outside the parent's
+                DOM hierarchy, while preserving React tree relationships
+                (context, events). Used for modals, tooltips, toasts.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>What is hydration?</summary>
+            <div class="qa-body">
+              <p>
+                The process of attaching React event listeners and state to
+                server-rendered HTML. React walks the existing DOM instead of
+                creating it, then makes it interactive. Hydration mismatches
+                occur when the client's first render diverges from the server's
+                HTML.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How does React batch state updates?</summary>
+            <div class="qa-body">
+              <p>
+                Multiple <code>setState</code> calls in the same tick are
+                collected and processed in a single render. Before React 18,
+                batching only happened in event handlers; React 18 batches in
+                promises, timers, and native events as well.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>What does <code>flushSync</code> do?</summary>
+            <div class="qa-body">
+              <p>
+                Forces the enclosed state update to render synchronously,
+                escaping batching. Rare — use only when you must read the
+                updated DOM before the next tick (e.g., before scrolling).
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>
+              How does <code>Suspense</code> work under the hood?
+            </summary>
+            <div class="qa-body">
+              <p>
+                Components can throw a promise. React catches it at the nearest
+                Suspense boundary, marks that subtree as pending, renders the
+                fallback, and attaches a continuation to retry when the promise
+                resolves. In concurrent mode, unrelated work continues
+                meanwhile.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Reconciliation heuristics in one sentence?</summary>
+            <div class="qa-body">
+              <p>
+                Assume same element type at same position = same instance;
+                different type = destroy and remount; use keys to match list
+                items across renders.
+              </p>
+            </div>
+          </details>
+        </section>
+
+        <section id="behavioral">
+          <h2><span class="num">26</span>Behavioral &amp; Leadership</h2>
+          <p>
+            Senior interviews at Google, Meta, and Netflix balance technical
+            depth with judgment. Prepare concise STAR-format stories for:
+          </p>
+          <ul>
+            <li>
+              A performance problem you diagnosed end-to-end (with numbers).
+            </li>
+            <li>
+              A React migration you drove (Class → Hooks, CRA → Vite/Next, Redux
+              → RTK Query, etc.).
+            </li>
+            <li>An accessibility push you owned.</li>
+            <li>
+              A production incident and the durable change you made afterward.
+            </li>
+            <li>
+              A disagreement with a designer or backend engineer and how it
+              resolved.
+            </li>
+            <li>
+              Mentoring — helping a junior get unblocked, code review feedback
+              that landed.
+            </li>
+            <li>A decision to say "no" or de-scope work.</li>
+            <li>How you weigh technical debt vs shipping.</li>
+          </ul>
+
+          <h3>Company-specific flavor</h3>
+          <ul>
+            <li>
+              <strong>Meta</strong> — bias for action, impact framing, "move
+              fast"; expect deep dives on rendering and instrumentation.
+            </li>
+            <li>
+              <strong>Google</strong> — "Googleyness" + leadership; strong bar
+              on system design and quantified reasoning; a11y &amp; i18n taken
+              seriously.
+            </li>
+            <li>
+              <strong>Netflix</strong> — "highly aligned, loosely coupled"; talk
+              about autonomy, judgment, and how you say "no". Media / streaming
+              context helps.
+            </li>
+          </ul>
+
+          <h3>Sample prompts to rehearse</h3>
+          <ul>
+            <li>"Walk me through the most complex frontend you've built."</li>
+            <li>"Describe a time you disagreed with a technical decision."</li>
+            <li>"How do you evaluate a new library for adoption?"</li>
+            <li>
+              "Tell me about a technical decision you'd make differently in
+              hindsight."
+            </li>
+            <li>"How do you approach testing strategy for a large app?"</li>
+          </ul>
+          <div class="callout">
+            <div class="label">Tip</div>
+            <p>
+              For each story, prepare: the <strong>situation</strong>, your
+              specific <strong>role</strong> (avoid "we"), the
+              <strong>trade-offs</strong> you considered, the
+              <strong>action</strong>, the
+              <strong>metric-backed result</strong>, and what you'd
+              <strong>do differently</strong> now.
+            </p>
+          </div>
+        </section>
+
+        <section id="checklist">
+          <h2><span class="num">27</span>Prep Checklist</h2>
+          <h3>Week 1 — Foundations</h3>
+          <ul>
+            <li>Re-read react.dev "Learn" section end-to-end.</li>
+            <li>
+              Rebuild tic-tac-toe with history + winner logic from memory.
+            </li>
+            <li>Explain JSX → element → Fiber → DOM to a rubber duck.</li>
+            <li>Write out the two rules of hooks and why they exist.</li>
+          </ul>
+          <h3>Week 2 — Hooks &amp; performance</h3>
+          <ul>
+            <li>
+              Implement <code>useDebounce</code>,
+              <code>useOnClickOutside</code>, <code>usePrevious</code>,
+              <code>useLocalStorage</code> without looking.
+            </li>
+            <li>
+              Profile a slow page in DevTools Profiler; explain the flamegraph.
+            </li>
+            <li>Fix a re-render storm with memoization + colocated state.</li>
+            <li>Virtualize a 10k-row table.</li>
+          </ul>
+          <h3>Week 3 — Concurrent React &amp; RSC</h3>
+          <ul>
+            <li>Draw the render/commit phases and effect ordering.</li>
+            <li>
+              Use <code>useTransition</code> and
+              <code>useDeferredValue</code> on a real slow filter.
+            </li>
+            <li>
+              Build a small Next.js RSC app with a server action +
+              <code>useOptimistic</code>.
+            </li>
+            <li>Explain hydration and streaming SSR in &lt; 3 minutes.</li>
+          </ul>
+          <h3>Week 4 — System design &amp; polish</h3>
+          <ul>
+            <li>
+              Sketch four system design answers: feed, editor, video player,
+              autocomplete.
+            </li>
+            <li>Rehearse 6 behavioral stories with a partner, STAR format.</li>
+            <li>Explain RSC to a non-React engineer in &lt; 2 minutes.</li>
+            <li>Do 5 timed 30-minute coding challenges from the list above.</li>
+          </ul>
+
+          <div class="callout ok">
+            <div class="label">Final tip</div>
+            <p>
+              Bar-raiser interviews reward candidates who ground every answer in
+              <strong>trade-offs</strong>: latency vs freshness, bundle size vs
+              interactivity, complexity vs velocity, DX vs UX. They want to see
+              you reason, not recite. Show measurements, not opinions.
+            </p>
+          </div>
+        </section>
+
+        <footer>
+          <p>
+            Built as a self-contained study guide. Push to a GitHub repo, enable
+            Pages, done.
+          </p>
+          <p>
+            <a href="https://react.dev">Official React docs</a> ·
+            <a href="#top">Back to top</a>
+          </p>
+        </footer>
+      </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-tsx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script>
+      const themeBtn = document.getElementById("theme-toggle");
+      const saved = localStorage.getItem("theme");
+      if (saved) document.documentElement.setAttribute("data-theme", saved);
+      themeBtn.addEventListener("click", () => {
+        const cur =
+          document.documentElement.getAttribute("data-theme") === "light"
+            ? ""
+            : "light";
+        document.documentElement.setAttribute("data-theme", cur);
+        localStorage.setItem("theme", cur);
+      });
+      document.getElementById("expand-all").addEventListener("click", (e) => {
+        const opening = e.target.textContent === "Expand all";
+        document
+          .querySelectorAll("details.qa")
+          .forEach((d) => (d.open = opening));
+        e.target.textContent = opening ? "Collapse all" : "Expand all";
+      });
+      const search = document.getElementById("search");
+      search.addEventListener("input", () => {
+        const q = search.value.trim().toLowerCase();
+        document.querySelectorAll("section").forEach((s) => {
+          if (!q) {
+            s.classList.remove("hidden");
+            s.querySelectorAll("details.qa,h3,h4,p,li,pre,.callout").forEach(
+              (el) => el.classList.remove("hidden"),
+            );
+            return;
+          }
+          const txt = s.textContent.toLowerCase();
+          s.classList.toggle("hidden", !txt.includes(q));
+        });
+      });
+      const links = document.querySelectorAll(".toc a");
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              const id = e.target.id;
+              links.forEach((l) =>
+                l.classList.toggle(
+                  "active",
+                  l.getAttribute("href") === "#" + id,
+                ),
+              );
+            }
+          });
+        },
+        { rootMargin: "-30% 0px -60% 0px" },
+      );
+      document.querySelectorAll("section[id]").forEach((s) => io.observe(s));
+    </script>
+  </body>
+</html>

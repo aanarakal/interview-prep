@@ -1,0 +1,2387 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Next.js Interview Prep · Senior Software Engineer</title>
+    <meta
+      name="description"
+      content="Comprehensive Next.js interview prep for senior software engineers — App Router, RSC, caching, streaming, server actions, system design."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+    />
+    <style>
+      :root {
+        --bg: #0b0d12;
+        --elev: #12151c;
+        --elev2: #171b24;
+        --border: #232833;
+        --text: #e6e9ef;
+        --dim: #9aa3b2;
+        --muted: #6b7385;
+        --accent: #60a5fa;
+        --accent2: #a78bfa;
+        --ok: #34d399;
+        --warn: #fbbf24;
+        --danger: #f87171;
+        --code: #0f1218;
+      }
+      [data-theme="light"] {
+        --bg: #fff;
+        --elev: #f7f8fa;
+        --elev2: #eef1f6;
+        --border: #e2e6ee;
+        --text: #0f172a;
+        --dim: #4b5563;
+        --muted: #6b7280;
+        --accent: #2563eb;
+        --accent2: #7c3aed;
+        --ok: #059669;
+        --warn: #d97706;
+        --danger: #dc2626;
+        --code: #f3f4f8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px;
+      }
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      code,
+      pre,
+      kbd {
+        font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+        font-size: 0.9em;
+      }
+      header.top {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: saturate(180%) blur(12px);
+        background: color-mix(in oklab, var(--bg) 85%, transparent);
+        border-bottom: 1px solid var(--border);
+      }
+      .top-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .logo {
+        font-weight: 800;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        box-shadow: 0 0 12px var(--accent);
+      }
+      .search {
+        flex: 1;
+        max-width: 480px;
+        position: relative;
+      }
+      .search input {
+        width: 100%;
+        padding: 10px 14px 10px 38px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--elev);
+        color: var(--text);
+        font: inherit;
+        font-size: 0.9rem;
+        outline: none;
+      }
+      .search input:focus {
+        border-color: var(--accent);
+      }
+      .search::before {
+        content: "🔍";
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.85rem;
+        opacity: 0.7;
+      }
+      .btn {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--elev);
+        color: var(--text);
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      .btn:hover {
+        background: var(--elev2);
+        border-color: var(--accent);
+      }
+      .layout {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 32px;
+        padding: 24px;
+      }
+      aside.sidebar {
+        position: sticky;
+        top: 80px;
+        align-self: start;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        padding-right: 8px;
+      }
+      aside.sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+      aside.sidebar::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+      .toc-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-weight: 600;
+        margin: 16px 0 8px;
+      }
+      .toc a {
+        display: block;
+        padding: 6px 12px;
+        color: var(--dim);
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 0.88rem;
+        margin: 2px 0;
+        border-left: 2px solid transparent;
+      }
+      .toc a:hover {
+        color: var(--text);
+        background: var(--elev);
+      }
+      .toc a.active {
+        color: var(--accent);
+        border-left-color: var(--accent);
+        background: var(--elev);
+      }
+      main {
+        min-width: 0;
+      }
+      .hero {
+        padding: 40px 32px;
+        border-radius: 16px;
+        background: linear-gradient(
+          135deg,
+          color-mix(in oklab, var(--accent) 15%, var(--elev)),
+          color-mix(in oklab, var(--accent2) 10%, var(--elev))
+        );
+        border: 1px solid var(--border);
+        margin-bottom: 40px;
+      }
+      .hero h1 {
+        margin: 0 0 12px;
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .hero p {
+        margin: 0;
+        color: var(--dim);
+        font-size: 1.05rem;
+        max-width: 720px;
+      }
+      .hero .meta {
+        margin-top: 20px;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      section {
+        margin: 48px 0;
+        padding-top: 8px;
+      }
+      section > h2 {
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin: 0 0 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      section > h2 .num {
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      h3 {
+        font-size: 1.2rem;
+        margin: 32px 0 8px;
+        font-weight: 600;
+      }
+      h4 {
+        font-size: 1rem;
+        margin: 20px 0 4px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+      p {
+        color: var(--dim);
+        margin: 8px 0;
+      }
+      ul,
+      ol {
+        color: var(--dim);
+        padding-left: 24px;
+      }
+      li {
+        margin: 4px 0;
+      }
+      strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      :not(pre) > code {
+        background: var(--code);
+        color: var(--accent);
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        font-size: 0.85em;
+      }
+      pre {
+        background: var(--code) !important;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px 18px !important;
+        overflow-x: auto;
+        margin: 12px 0;
+        font-size: 0.85rem;
+        line-height: 1.55;
+      }
+      pre::-webkit-scrollbar {
+        height: 8px;
+      }
+      pre::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+      .callout {
+        padding: 14px 18px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--elev);
+        margin: 16px 0;
+        border-left: 3px solid var(--accent);
+      }
+      .callout.warn {
+        border-left-color: var(--warn);
+      }
+      .callout.ok {
+        border-left-color: var(--ok);
+      }
+      .callout.danger {
+        border-left-color: var(--danger);
+      }
+      .callout .label {
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--accent);
+        margin-bottom: 4px;
+      }
+      .callout.warn .label {
+        color: var(--warn);
+      }
+      .callout.ok .label {
+        color: var(--ok);
+      }
+      .callout.danger .label {
+        color: var(--danger);
+      }
+      details.qa {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--elev);
+        margin: 10px 0;
+        overflow: hidden;
+      }
+      details.qa[open] {
+        border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+      }
+      details.qa summary {
+        padding: 14px 18px;
+        cursor: pointer;
+        font-weight: 500;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        color: var(--text);
+      }
+      details.qa summary::-webkit-details-marker {
+        display: none;
+      }
+      details.qa summary::after {
+        content: "+";
+        color: var(--accent);
+        font-size: 1.3rem;
+        font-weight: 300;
+      }
+      details.qa[open] summary::after {
+        content: "−";
+      }
+      details.qa summary:hover {
+        background: var(--elev2);
+      }
+      details.qa .qa-body {
+        padding: 4px 18px 18px;
+        border-top: 1px solid var(--border);
+      }
+      .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: color-mix(in oklab, var(--accent) 15%, transparent);
+        color: var(--accent);
+        border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+      }
+      .tag.hot {
+        background: color-mix(in oklab, var(--danger) 15%, transparent);
+        color: var(--danger);
+        border-color: color-mix(in oklab, var(--danger) 30%, transparent);
+      }
+      .table-wrap {
+        overflow-x: auto;
+        margin: 14px 0;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        color: var(--dim);
+      }
+      th {
+        background: var(--elev);
+        color: var(--text);
+        font-weight: 600;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: var(--elev);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        margin: 16px 0;
+      }
+      .card {
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--elev);
+      }
+      .card h4 {
+        margin: 0 0 6px;
+        font-size: 0.95rem;
+      }
+      .card p {
+        margin: 0;
+        font-size: 0.85rem;
+      }
+      footer {
+        text-align: center;
+        padding: 40px 24px;
+        color: var(--muted);
+        font-size: 0.85rem;
+        border-top: 1px solid var(--border);
+        margin-top: 60px;
+      }
+      footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      @media print {
+        aside.sidebar,
+        header.top,
+        footer {
+          display: none;
+        }
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        details.qa {
+          break-inside: avoid;
+        }
+        details.qa .qa-body {
+          display: block !important;
+        }
+        details.qa summary::after {
+          display: none;
+        }
+      }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        aside.sidebar {
+          position: static;
+          max-height: none;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          padding: 12px;
+          margin-bottom: 20px;
+        }
+        .search {
+          max-width: none;
+        }
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="top-inner">
+        <div class="logo">
+          <span class="dot"></span><span>Next.js · Senior Interview Prep</span>
+        </div>
+        <div class="search">
+          <input
+            type="search"
+            id="search"
+            placeholder="Search topics…"
+            aria-label="Search"
+          />
+        </div>
+        <button class="btn" id="expand-all">Expand all</button>
+        <button class="btn" id="theme-toggle" aria-label="Toggle theme">
+          🌓
+        </button>
+      </div>
+    </header>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="toc-title">Contents</div>
+        <nav class="toc" id="toc">
+          <a href="#fundamentals">1. Fundamentals</a>
+          <a href="#routing">2. Routing (App Router)</a>
+          <a href="#rendering">3. Rendering Strategies</a>
+          <a href="#rsc">4. React Server Components</a>
+          <a href="#data-fetching">5. Data Fetching</a>
+          <a href="#caching">6. Caching Deep Dive</a>
+          <a href="#server-actions">7. Server Actions</a>
+          <a href="#streaming">8. Streaming &amp; Suspense</a>
+          <a href="#middleware">9. Middleware &amp; Edge</a>
+          <a href="#metadata">10. Metadata &amp; SEO</a>
+          <a href="#api">11. Route Handlers</a>
+          <a href="#optimization">12. Performance</a>
+          <a href="#auth">13. Authentication</a>
+          <a href="#state">14. State Management</a>
+          <a href="#testing">15. Testing</a>
+          <a href="#security">16. Security</a>
+          <a href="#deployment">17. Deployment</a>
+          <a href="#system-design">18. System Design</a>
+          <a href="#pitfalls">19. Pitfalls</a>
+          <a href="#rapid-fire">20. Rapid-Fire Q&amp;A</a>
+          <a href="#behavioral">21. Behavioral</a>
+          <a href="#checklist">22. Prep Checklist</a>
+        </nav>
+      </aside>
+      <main>
+        <div class="hero">
+          <h1>Next.js Interview Prep</h1>
+          <p>
+            A senior-engineer-level study guide covering the App Router, React
+            Server Components, caching, streaming, server actions, edge runtime,
+            performance, security, and system design.
+          </p>
+          <div class="meta">
+            <span>⚡ Next.js 14 / 15 (App Router)</span
+            ><span>🎯 Senior / Staff</span><span>📚 22 sections</span
+            ><span>🖨️ Print-friendly</span>
+          </div>
+        </div>
+        <section id="fundamentals">
+          <h2><span class="num">01</span>Next.js Fundamentals</h2>
+          <h3>What is Next.js?</h3>
+          <p>
+            A React framework by Vercel that provides production primitives:
+            file-system routing, hybrid rendering (SSR/SSG/ISR/CSR/RSC), image
+            and font optimization, code splitting, middleware, server actions,
+            and a build pipeline (Turbopack/Webpack).
+          </p>
+          <h3>Key value propositions</h3>
+          <ul>
+            <li>
+              <strong>Hybrid rendering per route</strong> — mix static, dynamic,
+              streamed, and client-rendered content in one app.
+            </li>
+            <li>
+              <strong>Zero-config code splitting</strong> — each route is its
+              own bundle; client components ship only when needed.
+            </li>
+            <li>
+              <strong>Server-first architecture</strong> — React Server
+              Components keep data-fetching and secrets on the server while
+              shipping less JS.
+            </li>
+            <li>
+              <strong>Built-in optimization</strong> — <code>next/image</code>,
+              <code>next/font</code>, <code>next/script</code>, automatic
+              prefetching.
+            </li>
+            <li>
+              <strong>Edge and Node runtimes</strong> — same code deploys to
+              serverless functions or the edge.
+            </li>
+          </ul>
+          <h3>App Router vs Pages Router</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Pages Router</th>
+                  <th>App Router</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Default component</td>
+                  <td>Client</td>
+                  <td>Server</td>
+                </tr>
+                <tr>
+                  <td>Data fetching</td>
+                  <td>
+                    <code>getStaticProps</code>, <code>getServerSideProps</code>
+                  </td>
+                  <td>
+                    <code>fetch()</code> in RSC, async components, server
+                    actions
+                  </td>
+                </tr>
+                <tr>
+                  <td>Layouts</td>
+                  <td><code>_app.tsx</code> only</td>
+                  <td>Nested <code>layout.tsx</code> per segment</td>
+                </tr>
+                <tr>
+                  <td>Loading UI</td>
+                  <td>Manual</td>
+                  <td><code>loading.tsx</code> + Suspense streaming</td>
+                </tr>
+                <tr>
+                  <td>Errors</td>
+                  <td><code>_error.tsx</code></td>
+                  <td><code>error.tsx</code> per segment</td>
+                </tr>
+                <tr>
+                  <td>Mutations</td>
+                  <td>API routes</td>
+                  <td>Server Actions or Route Handlers</td>
+                </tr>
+                <tr>
+                  <td>Streaming</td>
+                  <td>Limited</td>
+                  <td>First-class via Suspense</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout ok">
+            <div class="label">Talking point</div>
+            <p>
+              The App Router shifts the mental model from "render on client,
+              hydrate on load" to "compose server-rendered trees, opt into
+              interactivity". Server Components reduce client bundle and
+              colocate data logic with UI.
+            </p>
+          </div>
+          <h3>File-system conventions (App Router)</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>File</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>page.tsx</code></td>
+                  <td>Route UI (server by default)</td>
+                </tr>
+                <tr>
+                  <td><code>layout.tsx</code></td>
+                  <td>
+                    Shared UI wrapping children; preserves state on navigation
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>template.tsx</code></td>
+                  <td>Like layout but remounts on nav</td>
+                </tr>
+                <tr>
+                  <td><code>loading.tsx</code></td>
+                  <td>Automatic Suspense boundary</td>
+                </tr>
+                <tr>
+                  <td><code>error.tsx</code></td>
+                  <td>Client error boundary per segment</td>
+                </tr>
+                <tr>
+                  <td><code>not-found.tsx</code></td>
+                  <td>UI for <code>notFound()</code></td>
+                </tr>
+                <tr>
+                  <td><code>route.ts</code></td>
+                  <td>HTTP handlers (GET/POST/…)</td>
+                </tr>
+                <tr>
+                  <td><code>middleware.ts</code></td>
+                  <td>Runs before request completes (edge)</td>
+                </tr>
+                <tr>
+                  <td><code>(group)</code></td>
+                  <td>Route group — organize without affecting URL</td>
+                </tr>
+                <tr>
+                  <td><code>[param]</code></td>
+                  <td>Dynamic segment</td>
+                </tr>
+                <tr>
+                  <td><code>[...slug]</code></td>
+                  <td>Catch-all</td>
+                </tr>
+                <tr>
+                  <td><code>[[...slug]]</code></td>
+                  <td>Optional catch-all</td>
+                </tr>
+                <tr>
+                  <td><code>@slot</code></td>
+                  <td>Parallel route slot</td>
+                </tr>
+                <tr>
+                  <td><code>(.) (..) (...)</code></td>
+                  <td>Intercepting routes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="routing">
+          <h2><span class="num">02</span>Routing (App Router)</h2>
+          <h3>Nested layouts</h3>
+          <p>
+            Layouts wrap their subtree and
+            <strong>preserve state on navigation</strong> between sibling
+            routes. Layouts receive <code>children</code> and can be async
+            server components.
+          </p>
+          <pre><code class="language-tsx">// app/dashboard/layout.tsx
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const user = await getUser()
+  return (&lt;div&gt;&lt;Sidebar user={user} /&gt;&lt;main&gt;{children}&lt;/main&gt;&lt;/div&gt;)
+}</code></pre>
+          <h3>Dynamic segments</h3>
+          <pre><code class="language-tsx">// app/blog/[slug]/page.tsx
+type Props = { params: Promise&lt;{ slug: string }&gt; }
+export default async function Post({ params }: Props) {
+  const { slug } = await params        // Next 15: params is a Promise
+  const post = await getPost(slug)
+  return &lt;article&gt;{post.title}&lt;/article&gt;
+}
+export async function generateStaticParams() {
+  const posts = await getAllPosts()
+  return posts.map((p) =&gt; ({ slug: p.slug }))
+}</code></pre>
+          <div class="callout warn">
+            <div class="label">Next 15 change</div>
+            <p>
+              <code>params</code>, <code>searchParams</code>,
+              <code>cookies()</code>, <code>headers()</code>, and
+              <code>draftMode()</code> are now <strong>asynchronous</strong>.
+              Must be <code>await</code>ed. Common gotcha in interviews and
+              migrations.
+            </p>
+          </div>
+          <h3>Parallel routes</h3>
+          <p>
+            Render multiple pages in the same layout using named slots
+            (<code>@team</code>, <code>@analytics</code>). Great for dashboards
+            with independent loading/error states.
+          </p>
+          <pre><code class="language-tsx">// app/dashboard/layout.tsx
+export default function Layout({ children, team, analytics }: {
+  children: React.ReactNode; team: React.ReactNode; analytics: React.ReactNode
+}) {
+  return &lt;&gt;{children}{team}{analytics}&lt;/&gt;
+}</code></pre>
+          <h3>Intercepting routes</h3>
+          <p>
+            Show a route "in place" — e.g. open a photo in a modal over the feed
+            on client nav, but as a full page on refresh / direct link. Uses
+            <code>(.)</code>, <code>(..)</code>, <code>(...)</code> plus a
+            parallel slot.
+          </p>
+          <h3>Route groups</h3>
+          <pre><code class="language-plaintext">app/
+  (marketing)/layout.tsx  page.tsx        // /
+  (app)/layout.tsx        dashboard/page.tsx // /dashboard</code></pre>
+          <h3>Navigation APIs</h3>
+          <ul>
+            <li>
+              <code>&lt;Link&gt;</code> — declarative, prefetches by default in
+              production.
+            </li>
+            <li>
+              <code>useRouter()</code> from <code>next/navigation</code> —
+              <code>push</code>, <code>replace</code>, <code>refresh</code>,
+              <code>back</code>.
+            </li>
+            <li>
+              <code>redirect()</code>, <code>notFound()</code> from
+              <code>next/navigation</code> — throwable helpers.
+            </li>
+            <li>
+              <code>usePathname()</code>, <code>useSearchParams()</code>,
+              <code>useParams()</code> — client hooks.
+            </li>
+          </ul>
+        </section>
+
+        <section id="rendering">
+          <h2>
+            <span class="num">03</span>Rendering Strategies
+            <span class="tag hot">Hot</span>
+          </h2>
+          <p>The most-asked topic. Be able to draw and compare all five.</p>
+          <div class="grid">
+            <div class="card">
+              <h4>CSR</h4>
+              <p>
+                HTML shell + JS bundle; content rendered in browser. Slow first
+                paint, no SEO by default.
+              </p>
+            </div>
+            <div class="card">
+              <h4>SSR</h4>
+              <p>
+                HTML generated per request. Fresh data, slower TTFB. Any dynamic
+                route in App Router.
+              </p>
+            </div>
+            <div class="card">
+              <h4>SSG</h4>
+              <p>
+                HTML produced at build time. Fastest delivery via CDN, but stale
+                until rebuild.
+              </p>
+            </div>
+            <div class="card">
+              <h4>ISR</h4>
+              <p>
+                Static + revalidation window (<code>revalidate: 60</code>) or
+                on-demand.
+              </p>
+            </div>
+            <div class="card">
+              <h4>RSC / PPR</h4>
+              <p>
+                Static shell with dynamic holes streamed in — best of SSG + SSR.
+              </p>
+            </div>
+          </div>
+          <h3>How Next.js infers the mode</h3>
+          <ul>
+            <li>
+              Only cached <code>fetch()</code>, no dynamic APIs →
+              <strong>static</strong>.
+            </li>
+            <li>
+              Uses <code>cookies()</code>, <code>headers()</code>,
+              <code>searchParams</code>, or uncached fetch →
+              <strong>dynamic (SSR)</strong>.
+            </li>
+            <li>
+              <code>fetch(url, { next: { revalidate: N } })</code> or
+              <code>export const revalidate = N</code> → <strong>ISR</strong>.
+            </li>
+            <li>
+              <code>"use client"</code> at top → client component, hydrated in
+              browser.
+            </li>
+            <li>
+              Force with
+              <code
+                >export const dynamic = 'force-dynamic' | 'force-static'</code
+              >.
+            </li>
+          </ul>
+          <h3>Partial Prerendering (PPR)</h3>
+          <p>
+            Static shell prerendered at build; dynamic components inside
+            <code>&lt;Suspense&gt;</code> streamed at request time. Best of SSG
+            + SSR.
+          </p>
+          <pre><code class="language-tsx">// next.config.js
+module.exports = { experimental: { ppr: 'incremental' } }
+// app/product/[id]/page.tsx
+export const experimental_ppr = true
+export default function Page() {
+  return (&lt;&gt;
+    &lt;ProductHeader /&gt;         {/* static */}
+    &lt;Suspense fallback={&lt;Skeleton /&gt;}&gt;
+      &lt;UserRecommendations /&gt; {/* dynamic, streamed */}
+    &lt;/Suspense&gt;
+  &lt;/&gt;)
+}</code></pre>
+        </section>
+
+        <section id="rsc">
+          <h2><span class="num">04</span>React Server Components</h2>
+          <h3>Mental model</h3>
+          <p>
+            Server Components run <strong>only on the server</strong>. Never
+            ship JS to client, can be async, can access secrets/DB directly.
+            Client Components run in browser with state and effects.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Capability</th>
+                  <th>Server</th>
+                  <th>Client</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Fetch data / DB access</td>
+                  <td>✅</td>
+                  <td>❌ (via API)</td>
+                </tr>
+                <tr>
+                  <td>Access secrets / env</td>
+                  <td>✅</td>
+                  <td>❌</td>
+                </tr>
+                <tr>
+                  <td><code>useState</code>, <code>useEffect</code></td>
+                  <td>❌</td>
+                  <td>✅</td>
+                </tr>
+                <tr>
+                  <td>Event handlers</td>
+                  <td>❌</td>
+                  <td>✅</td>
+                </tr>
+                <tr>
+                  <td>Browser APIs (<code>window</code>)</td>
+                  <td>❌</td>
+                  <td>✅</td>
+                </tr>
+                <tr>
+                  <td>Async component</td>
+                  <td>✅</td>
+                  <td>❌</td>
+                </tr>
+                <tr>
+                  <td>Ships JS to browser</td>
+                  <td>No (serialized props only)</td>
+                  <td>Yes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>The <code>"use client"</code> boundary</h3>
+          <p>
+            A file marked <code>"use client"</code> and everything it imports
+            becomes part of the client bundle. Keep it at leaves of the tree.
+          </p>
+          <pre><code class="language-tsx">// app/product/page.tsx  (Server Component)
+import { AddToCartButton } from './add-to-cart' // client leaf
+export default async function Page() {
+  const product = await db.product.findFirst()
+  return (&lt;&gt;
+    &lt;h1&gt;{product.name}&lt;/h1&gt;
+    &lt;AddToCartButton id={product.id} /&gt;
+  &lt;/&gt;)
+}
+// app/product/add-to-cart.tsx
+'use client'
+import { useState } from 'react'
+export function AddToCartButton({ id }: { id: string }) {
+  const [loading, setLoading] = useState(false)
+  return &lt;button onClick={() =&gt; addToCart(id)}&gt;Add&lt;/button&gt;
+}</code></pre>
+          <h3>Composition rules</h3>
+          <ul>
+            <li>
+              You can <strong>pass server components as children</strong> to
+              client components — output is serialized as props. Keeps dynamic
+              children out of client bundle.
+            </li>
+            <li>
+              You
+              <strong
+                >cannot import a server component into a client
+                component</strong
+              >. Pass as <code>children</code> or prop.
+            </li>
+            <li>
+              Props crossing the boundary must be
+              <strong>serializable</strong> (no functions/class instances; Dates
+              and JSX work).
+            </li>
+          </ul>
+          <div class="callout">
+            <div class="label">Interview trick</div>
+            <p>
+              "How do you use a server component inside a client component?" —
+              You can't import directly, but pass as <code>children</code>.
+              Example: client <code>&lt;Tabs&gt;</code> wrapping server-rendered
+              tab contents.
+            </p>
+          </div>
+        </section>
+        <section id="data-fetching">
+          <h2><span class="num">05</span>Data Fetching</h2>
+          <h3>Fetching in Server Components</h3>
+          <pre><code class="language-tsx">export default async function Page() {
+  const [products, promos] = await Promise.all([
+    fetch('https://api.example.com/products', {
+      next: { revalidate: 3600, tags: ['products'] },
+    }).then((r) =&gt; r.json()),
+    fetch('https://api.example.com/promos', { cache: 'no-store' }).then((r) =&gt; r.json()),
+  ])
+  return &lt;ProductList products={products} promos={promos} /&gt;
+}</code></pre>
+          <h3>fetch options that matter</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Option</th>
+                  <th>Effect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>cache: 'force-cache'</code></td>
+                  <td>Cached indefinitely (Data Cache). Default in Next 14.</td>
+                </tr>
+                <tr>
+                  <td><code>cache: 'no-store'</code></td>
+                  <td>Skip Data Cache; route becomes dynamic.</td>
+                </tr>
+                <tr>
+                  <td><code>next.revalidate: N</code></td>
+                  <td>Time-based ISR (seconds).</td>
+                </tr>
+                <tr>
+                  <td><code>next.tags: [...]</code></td>
+                  <td>
+                    Tag entries for on-demand invalidation with
+                    <code>revalidateTag</code>.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout warn">
+            <div class="label">Next 15 default</div>
+            <p>
+              <strong>Fetch is no longer cached by default</strong> in Next 15.
+              Opt in with <code>{'{ cache: "force-cache" }'}</code> or
+              <code>{'{ next: { revalidate: N } }'}</code>. Same for GET route
+              handlers. Big migration impact.
+            </p>
+          </div>
+          <h3>Parallel vs sequential (waterfalls)</h3>
+          <pre><code class="language-tsx">// ❌ Waterfall — 2× round trips
+const user = await getUser()
+const posts = await getPosts(user.id)
+// ✅ Parallel where possible
+const [user, global] = await Promise.all([getUser(), getGlobalFeed()])</code></pre>
+          <h3>Preloading pattern</h3>
+          <pre><code class="language-tsx">// utils.ts
+export const preloadItem = (id: string) =&gt; { void getItem(id) }
+export const getItem = cache(async (id: string) =&gt; db.item.find(id))
+// page.tsx
+export default async function Page({ params }: { params: Promise&lt;{ id: string }&gt; }) {
+  const { id } = await params
+  preloadItem(id)         // kicks off fetch
+  return &lt;Item id={id} /&gt;
+}</code></pre>
+          <h3>React <code>cache()</code> vs fetch dedup</h3>
+          <ul>
+            <li>
+              <strong>Request memoization</strong>: identical
+              <code>fetch()</code> calls in same render deduped automatically by
+              React.
+            </li>
+            <li>
+              <strong><code>cache()</code></strong> (from React): dedupes
+              non-fetch async functions (DB calls) during a single request.
+            </li>
+          </ul>
+          <pre><code class="language-tsx">import { cache } from 'react'
+export const getUser = cache(async (id: string) =&gt; db.user.find(id))</code></pre>
+          <h3>Client-side data fetching</h3>
+          <p>
+            For interactive/per-user/frequently-updating client data, use
+            <strong>SWR</strong> or <strong>TanStack Query</strong>. Combine
+            with server-provided initial data for best UX (no waterfall on first
+            paint).
+          </p>
+        </section>
+
+        <section id="caching">
+          <h2>
+            <span class="num">06</span>Caching Deep Dive
+            <span class="tag hot">Must Know</span>
+          </h2>
+          <p>
+            The #1 source of confusion in Next.js interviews. Four independent
+            caches in the App Router.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Layer</th>
+                  <th>Where</th>
+                  <th>Purpose</th>
+                  <th>Invalidate with</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Request Memoization</strong></td>
+                  <td>Per-request, React</td>
+                  <td>
+                    Dedupe identical fetches / <code>cache()</code> calls in one
+                    render
+                  </td>
+                  <td>Ends at request end</td>
+                </tr>
+                <tr>
+                  <td><strong>Data Cache</strong></td>
+                  <td>Server, persistent (across users / deploys)</td>
+                  <td>Cache <code>fetch()</code> results</td>
+                  <td>
+                    Time (<code>revalidate</code>), tags
+                    (<code>revalidateTag</code>), path
+                    (<code>revalidatePath</code>)
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Full Route Cache</strong></td>
+                  <td>Server, per build</td>
+                  <td>Cache rendered RSC payload + HTML of static routes</td>
+                  <td>
+                    Redeploy, <code>revalidatePath</code>,
+                    <code>revalidateTag</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Router Cache</strong></td>
+                  <td>Client, in-memory (per session)</td>
+                  <td>Cache RSC payloads for back/forward + prefetch</td>
+                  <td>
+                    <code>router.refresh()</code>, server action returns, tab
+                    close
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Revalidation APIs</h3>
+          <pre><code class="language-ts">import { revalidatePath, revalidateTag } from 'next/cache'
+// In a server action or route handler:
+await db.post.create({ ... })
+revalidateTag('posts')            // invalidate fetches tagged 'posts'
+revalidatePath('/blog')           // invalidate the /blog route</code></pre>
+          <h3>On-demand ISR</h3>
+          <pre><code class="language-ts">// app/api/revalidate/route.ts
+import { revalidateTag } from 'next/cache'
+import { NextResponse } from 'next/server'
+export async function POST(req: Request) {
+  const secret = req.headers.get('x-secret')
+  if (secret !== process.env.REVALIDATE_SECRET)
+    return new NextResponse('Unauthorized', { status: 401 })
+  const { tag } = await req.json()
+  revalidateTag(tag)
+  return NextResponse.json({ ok: true })
+}</code></pre>
+          <div class="callout warn">
+            <div class="label">Next 15 change</div>
+            <p>
+              The <strong>Router Cache</strong> no longer caches Page components
+              by default (<code>staleTimes.dynamic = 0</code>). Navigations feel
+              fresher but back/forward can trigger a fetch.
+            </p>
+          </div>
+          <h3>Interview whiteboard: request lifecycle</h3>
+          <ol>
+            <li>Browser hits URL → CDN check.</li>
+            <li>CDN miss → server: check Full Route Cache.</li>
+            <li>
+              Miss → render RSC tree; each <code>fetch()</code> hits Data Cache
+              first.
+            </li>
+            <li>
+              Data Cache miss → origin call; store in Data Cache (with tags).
+            </li>
+            <li>
+              Response streamed to browser; Router Cache stores RSC payload for
+              future navigations.
+            </li>
+          </ol>
+        </section>
+
+        <section id="server-actions">
+          <h2><span class="num">07</span>Server Actions &amp; Mutations</h2>
+          <p>
+            Call a server function from a client component without hand-writing
+            an API endpoint. Great for forms, likes, add-to-cart.
+          </p>
+          <pre><code class="language-tsx">// app/actions.ts
+'use server'
+import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+const CreatePost = z.object({ title: z.string().min(1).max(100), body: z.string().min(1) })
+export async function createPost(formData: FormData) {
+  const parsed = CreatePost.safeParse({
+    title: formData.get('title'), body: formData.get('body'),
+  })
+  if (!parsed.success) return { error: parsed.error.flatten() }
+  const user = await getSession()
+  if (!user) throw new Error('Unauthorized')
+  await db.post.create({ data: { ...parsed.data, userId: user.id } })
+  revalidatePath('/blog')
+  return { ok: true }
+}</code></pre>
+          <pre><code class="language-tsx">// app/new/page.tsx
+import { createPost } from '@/app/actions'
+export default function NewPost() {
+  return (&lt;form action={createPost}&gt;
+    &lt;input name="title" /&gt;&lt;textarea name="body" /&gt;
+    &lt;button type="submit"&gt;Save&lt;/button&gt;
+  &lt;/form&gt;)
+}</code></pre>
+          <h3>Progressive enhancement</h3>
+          <p>
+            Because actions attach to the form's <code>action</code> attribute,
+            submissions <strong>work without JavaScript</strong> — Next.js posts
+            to a hidden endpoint and re-renders. When JS is available it
+            upgrades to fetch + streamed response.
+          </p>
+          <h3><code>useFormState</code> and <code>useFormStatus</code></h3>
+          <pre><code class="language-tsx">'use client'
+import { useFormState, useFormStatus } from 'react-dom'
+function Submit() {
+  const { pending } = useFormStatus()
+  return &lt;button disabled={pending}&gt;{pending ? 'Saving…' : 'Save'}&lt;/button&gt;
+}
+export function PostForm() {
+  const [state, action] = useFormState(createPost, { ok: false })
+  return (&lt;form action={action}&gt;
+    &lt;input name="title" /&gt;
+    {state?.error && &lt;p&gt;{state.error.formErrors.join(', ')}&lt;/p&gt;}
+    &lt;Submit /&gt;
+  &lt;/form&gt;)
+}</code></pre>
+          <div class="callout danger">
+            <div class="label">Security</div>
+            <p>
+              Server actions are POST endpoints callable by anyone.
+              <strong
+                >Always re-check auth/authorization inside the action</strong
+              >. Never trust client-supplied user IDs.
+            </p>
+          </div>
+          <h3>Optimistic updates</h3>
+          <pre><code class="language-tsx">'use client'
+import { useOptimistic } from 'react'
+export function Likes({ post, likePost }: { post: Post; likePost: (id: string) =&gt; Promise&lt;void&gt; }) {
+  const [optimistic, add] = useOptimistic(post.likes, (n) =&gt; n + 1)
+  return (&lt;form action={async () =&gt; { add(1); await likePost(post.id) }}&gt;
+    &lt;button&gt;❤ {optimistic}&lt;/button&gt;
+  &lt;/form&gt;)
+}</code></pre>
+        </section>
+
+        <section id="streaming">
+          <h2><span class="num">08</span>Streaming &amp; Suspense</h2>
+          <p>
+            Next.js streams HTML chunks as they render. Wrap slow components in
+            <code>&lt;Suspense&gt;</code> and the shell is sent immediately.
+          </p>
+          <pre><code class="language-tsx">import { Suspense } from 'react'
+export default function Page() {
+  return (&lt;&gt;
+    &lt;Header /&gt;
+    &lt;Suspense fallback={&lt;FeedSkeleton /&gt;}&gt;&lt;Feed /&gt;&lt;/Suspense&gt;
+    &lt;Suspense fallback={&lt;SidebarSkeleton /&gt;}&gt;&lt;Sidebar /&gt;&lt;/Suspense&gt;
+  &lt;/&gt;)
+}</code></pre>
+          <h3><code>loading.tsx</code></h3>
+          <p>
+            Dropping a <code>loading.tsx</code> beside a page automatically
+            wraps <code>page.tsx</code> in a Suspense boundary — no code change
+            needed.
+          </p>
+          <h3>Benefits</h3>
+          <ul>
+            <li>Faster TTFB and FCP.</li>
+            <li>User sees layout + navigation while slow data loads.</li>
+            <li>
+              Independent failure domains via nested <code>error.tsx</code>.
+            </li>
+          </ul>
+          <h3>Caveats</h3>
+          <ul>
+            <li>
+              Setting <code>Cache-Control</code> on streamed responses is tricky
+              — response not fully known when headers are flushed.
+            </li>
+            <li>
+              Some legacy crawlers still don't handle chunked responses well.
+            </li>
+          </ul>
+        </section>
+
+        <section id="middleware">
+          <h2><span class="num">09</span>Middleware &amp; Edge Runtime</h2>
+          <p>
+            <code>middleware.ts</code> runs <strong>before</strong> a request is
+            handled — perfect for auth guards, A/B tests, geo redirects, bot
+            detection, i18n. Executes on the <strong>Edge Runtime</strong> (V8
+            isolates) by default.
+          </p>
+          <pre><code class="language-ts">// middleware.ts (project root)
+import { NextResponse, type NextRequest } from 'next/server'
+export function middleware(req: NextRequest) {
+  const token = req.cookies.get('token')
+  if (!token && req.nextUrl.pathname.startsWith('/dashboard')) {
+    const url = req.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('from', req.nextUrl.pathname)
+    return NextResponse.redirect(url)
+  }
+  const res = NextResponse.next()
+  res.headers.set('x-request-id', crypto.randomUUID())
+  return res
+}
+export const config = { matcher: ['/dashboard/:path*', '/api/:path*'] }</code></pre>
+          <h3>Edge vs Node runtime</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Edge</th>
+                  <th>Node.js</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cold start</td>
+                  <td>~0 ms</td>
+                  <td>100–500 ms</td>
+                </tr>
+                <tr>
+                  <td>Runtime API</td>
+                  <td>Web standards (fetch, Web Streams)</td>
+                  <td>Full Node API</td>
+                </tr>
+                <tr>
+                  <td>Native modules</td>
+                  <td>❌</td>
+                  <td>✅</td>
+                </tr>
+                <tr>
+                  <td>Bundle limit</td>
+                  <td>~1 MB (Vercel)</td>
+                  <td>50 MB</td>
+                </tr>
+                <tr>
+                  <td>Region</td>
+                  <td>Closest to user</td>
+                  <td>Fixed region(s)</td>
+                </tr>
+                <tr>
+                  <td>Best for</td>
+                  <td>Auth, personalization, A/B, redirects</td>
+                  <td>Heavy compute, native SDKs</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <pre><code class="language-ts">export const runtime = 'nodejs' // or 'edge'</code></pre>
+        </section>
+
+        <section id="metadata">
+          <h2><span class="num">10</span>Metadata &amp; SEO</h2>
+          <h3>Static metadata</h3>
+          <pre><code class="language-tsx">// app/layout.tsx
+import type { Metadata } from 'next'
+export const metadata: Metadata = {
+  title: { default: 'Acme', template: '%s · Acme' },
+  description: 'The Acme app',
+  openGraph: { images: ['/og.png'] },
+  twitter: { card: 'summary_large_image' },
+}</code></pre>
+          <h3>Dynamic metadata</h3>
+          <pre><code class="language-tsx">export async function generateMetadata({ params }: {
+  params: Promise&lt;{ slug: string }&gt;
+}): Promise&lt;Metadata&gt; {
+  const { slug } = await params
+  const post = await getPost(slug)
+  return { title: post.title, description: post.excerpt,
+    openGraph: { images: [post.coverUrl] } }
+}</code></pre>
+          <h3>Dynamic OG image</h3>
+          <pre><code class="language-tsx">// app/og/route.tsx
+import { ImageResponse } from 'next/og'
+export const runtime = 'edge'
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const title = searchParams.get('title') ?? 'Untitled'
+  return new ImageResponse(
+    &lt;div style={{ fontSize: 64, background: '#000', color: '#fff',
+      width: '100%', height: '100%', display: 'flex',
+      alignItems: 'center', justifyContent: 'center' }}&gt;{title}&lt;/div&gt;,
+    { width: 1200, height: 630 })
+}</code></pre>
+          <h3>SEO extras</h3>
+          <ul>
+            <li>
+              <code>app/robots.ts</code> and <code>app/sitemap.ts</code> —
+              auto-generated files.
+            </li>
+            <li>
+              JSON-LD via
+              <code>&lt;script type="application/ld+json"&gt;</code> in a server
+              component.
+            </li>
+            <li>
+              Canonical URLs via <code>metadata.alternates.canonical</code>.
+            </li>
+          </ul>
+        </section>
+        <section id="api">
+          <h2><span class="num">11</span>Route Handlers (API)</h2>
+          <pre><code class="language-ts">// app/api/users/route.ts
+import { NextResponse } from 'next/server'
+import { z } from 'zod'
+const CreateUser = z.object({ email: z.string().email() })
+export async function GET() {
+  const users = await db.user.findMany()
+  return NextResponse.json(users)
+}
+export async function POST(req: Request) {
+  const body = await req.json()
+  const parsed = CreateUser.safeParse(body)
+  if (!parsed.success) return NextResponse.json({ error: parsed.error }, { status: 400 })
+  const user = await db.user.create({ data: parsed.data })
+  return NextResponse.json(user, { status: 201 })
+}
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'</code></pre>
+          <h3>Dynamic segments</h3>
+          <pre><code class="language-ts">// app/api/users/[id]/route.ts
+export async function GET(_req: Request, { params }: { params: Promise&lt;{ id: string }&gt; }) {
+  const { id } = await params
+  return NextResponse.json(await db.user.find(id))
+}</code></pre>
+          <h3>CORS</h3>
+          <pre><code class="language-ts">export async function OPTIONS() {
+  return new Response(null, { headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  }})
+}</code></pre>
+          <div class="callout">
+            <div class="label">Rule of thumb</div>
+            <p>
+              For internal mutations from your own UI, prefer
+              <strong>Server Actions</strong>. Use Route Handlers for public
+              APIs, webhooks, non-HTML responses, or specific HTTP semantics.
+            </p>
+          </div>
+        </section>
+
+        <section id="optimization">
+          <h2><span class="num">12</span>Performance &amp; Optimization</h2>
+          <h3>Images (<code>next/image</code>)</h3>
+          <ul>
+            <li>
+              Automatic AVIF/WebP, lazy-loading, responsive <code>srcset</code>.
+            </li>
+            <li>
+              Requires <code>width</code>/<code>height</code> or
+              <code>fill</code> to prevent CLS.
+            </li>
+            <li>
+              Configure allowed remote hosts in
+              <code>next.config.js</code> under
+              <code>images.remotePatterns</code>.
+            </li>
+            <li>Use <code>priority</code> for LCP hero images to preload.</li>
+          </ul>
+          <pre><code class="language-tsx">import Image from 'next/image'
+&lt;Image src={product.image} alt={product.name} width={600} height={400} priority /&gt;</code></pre>
+          <h3>Fonts (<code>next/font</code>)</h3>
+          <pre><code class="language-tsx">import { Inter } from 'next/font/google'
+const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' })
+export default function Root({ children }: { children: React.ReactNode }) {
+  return &lt;html className={inter.variable}&gt;&lt;body&gt;{children}&lt;/body&gt;&lt;/html&gt;
+}</code></pre>
+          <p>
+            Self-hosts fonts at build; eliminates FOIT/FOUT; no runtime request
+            to Google Fonts; no CLS.
+          </p>
+          <h3>Scripts (<code>next/script</code>)</h3>
+          <p>
+            Strategies: <code>beforeInteractive</code>,
+            <code>afterInteractive</code>, <code>lazyOnload</code>,
+            <code>worker</code> — control loading of third-party scripts.
+          </p>
+          <h3>Bundle analysis</h3>
+          <pre><code class="language-bash">pnpm add -D @next/bundle-analyzer
+ANALYZE=true pnpm build</code></pre>
+          <h3>Dynamic imports</h3>
+          <pre><code class="language-tsx">import dynamic from 'next/dynamic'
+const HeavyChart = dynamic(() =&gt; import('./HeavyChart'), {
+  ssr: false, loading: () =&gt; &lt;Skeleton /&gt;,
+})</code></pre>
+          <h3>Core Web Vitals targets</h3>
+          <ul>
+            <li>
+              <strong>LCP</strong> &lt; 2.5 s — largest image/text block
+              visible.
+            </li>
+            <li>
+              <strong>INP</strong> &lt; 200 ms — interaction to next paint
+              (replaced FID in 2024).
+            </li>
+            <li><strong>CLS</strong> &lt; 0.1 — layout shift.</li>
+          </ul>
+          <h3>Next.js perf checklist</h3>
+          <ul>
+            <li>Push data-fetching to server; keep client bundles small.</li>
+            <li>
+              <code>next/image</code> with <code>priority</code> for hero.
+            </li>
+            <li><code>next/font</code> to eliminate font-related shifts.</li>
+            <li>Stream with Suspense; add <code>loading.tsx</code>.</li>
+            <li>Prefetch links (default), disable for very large trees.</li>
+            <li>Enable PPR for high-traffic pages.</li>
+            <li>Set <code>Cache-Control</code> on route handlers when safe.</li>
+            <li>
+              Enable <code>experimental.optimizePackageImports</code> for heavy
+              libs.
+            </li>
+          </ul>
+        </section>
+
+        <section id="auth">
+          <h2><span class="num">13</span>Authentication</h2>
+          <h3>Patterns</h3>
+          <ul>
+            <li>
+              <strong>Session cookie + middleware</strong>: middleware validates
+              signed cookie and redirects. Fast, edge-friendly.
+            </li>
+            <li>
+              <strong>JWT in HTTP-only cookie</strong>: stateless; verify in
+              middleware or server components.
+            </li>
+            <li>
+              <strong>Third-party</strong>: NextAuth / Auth.js, Clerk, Kinde,
+              WorkOS. Auth.js has first-class App Router support.
+            </li>
+          </ul>
+          <h3>Reading session in RSC</h3>
+          <pre><code class="language-tsx">import { cookies } from 'next/headers'
+import { verifySession } from '@/lib/session'
+export default async function Dashboard() {
+  const session = await verifySession((await cookies()).get('session')?.value)
+  if (!session) return &lt;LoginRedirect /&gt;
+  return &lt;Welcome name={session.name} /&gt;
+}</code></pre>
+          <div class="callout">
+            <div class="label">Best practice</div>
+            <p>
+              Use middleware for coarse redirects (unauthenticated → login), but
+              <strong>enforce authorization in your data layer</strong> — server
+              components, server actions, route handlers. Middleware alone is
+              not a security boundary because it doesn't protect API routes
+              called directly.
+            </p>
+          </div>
+          <h3>CSRF</h3>
+          <p>
+            Server Actions include a built-in origin check. For custom mutations
+            use SameSite=Lax cookies and verify
+            <code>Origin</code>/<code>Referer</code>.
+          </p>
+        </section>
+
+        <section id="state">
+          <h2><span class="num">14</span>State Management</h2>
+          <h3>Server state vs client state</h3>
+          <ul>
+            <li>
+              <strong>Server state</strong> — RSC + <code>fetch</code> +
+              <code>revalidate</code>, or SWR/TanStack Query for client
+              fetching.
+            </li>
+            <li>
+              <strong>UI state</strong> — <code>useState</code>,
+              <code>useReducer</code>, or light stores (Zustand, Jotai).
+            </li>
+            <li>
+              <strong>URL as state</strong> — filters and pagination in
+              <code>searchParams</code> → shareable, bookmarkable.
+            </li>
+          </ul>
+          <h3>Server-seeded, client-managed</h3>
+          <pre><code class="language-tsx">// Server: seed initial data
+const posts = await getPosts()
+return &lt;PostsList initial={posts} /&gt;
+// Client: SWR takes over
+'use client'
+import useSWR from 'swr'
+export function PostsList({ initial }: { initial: Post[] }) {
+  const { data } = useSWR('/api/posts', fetcher, { fallbackData: initial })
+  return &lt;ul&gt;{data.map((p) =&gt; &lt;li key={p.id}&gt;{p.title}&lt;/li&gt;)}&lt;/ul&gt;
+}</code></pre>
+          <div class="callout warn">
+            <div class="label">Gotcha</div>
+            <p>
+              A global store defined in a module can bleed across requests on
+              the server. Wrap client stores in a provider that creates the
+              store per mount, or import them only in
+              <code>"use client"</code> files.
+            </p>
+          </div>
+        </section>
+
+        <section id="testing">
+          <h2><span class="num">15</span>Testing</h2>
+          <h3>Layers</h3>
+          <ul>
+            <li>
+              <strong>Unit</strong> — Vitest/Jest for pure functions and
+              utilities.
+            </li>
+            <li>
+              <strong>Component</strong> — React Testing Library, prefer
+              role/label queries.
+            </li>
+            <li>
+              <strong>Integration</strong> — render server components with
+              stubbed data layer, or Playwright Component Testing.
+            </li>
+            <li>
+              <strong>E2E</strong> — Playwright or Cypress against
+              <code>next start</code>.
+            </li>
+          </ul>
+          <h3>Testing server components</h3>
+          <p>
+            RSC are async and use server-only APIs; typically (a) test
+            underlying data functions and render a client wrapper, or (b) run
+            E2E against a real build.
+          </p>
+          <h3>Mocking <code>next/navigation</code></h3>
+          <pre><code class="language-ts">// vitest.setup.ts
+import { vi } from 'vitest'
+vi.mock('next/navigation', () =&gt; ({
+  useRouter: () =&gt; ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }),
+  usePathname: () =&gt; '/',
+  useSearchParams: () =&gt; new URLSearchParams(),
+}))</code></pre>
+          <h3>Playwright E2E</h3>
+          <pre><code class="language-ts">import { test, expect } from '@playwright/test'
+test('homepage renders hero', async ({ page }) =&gt; {
+  await page.goto('/')
+  await expect(page.getByRole('heading', { name: /welcome/i })).toBeVisible()
+})</code></pre>
+        </section>
+
+        <section id="security">
+          <h2><span class="num">16</span>Security</h2>
+          <ul>
+            <li>
+              <strong>Never expose secrets to client.</strong> Env vars prefixed
+              <code>NEXT_PUBLIC_</code> are inlined into the client bundle.
+            </li>
+            <li>
+              <strong>Server-only modules.</strong> Add
+              <code>import 'server-only'</code> at top of a module to throw at
+              build if imported by a client component. Symmetric:
+              <code>import 'client-only'</code>.
+            </li>
+            <li>
+              <strong>CSP.</strong> Send strict Content-Security-Policy via
+              middleware, inject a nonce per request.
+            </li>
+            <li>
+              <strong>Rate limiting.</strong> Middleware + Upstash Redis or
+              similar edge KV.
+            </li>
+            <li>
+              <strong>SSRF.</strong> Sanitize server-side fetch targets; don't
+              proxy arbitrary user-supplied URLs.
+            </li>
+            <li>
+              <strong>Server Actions.</strong> Always re-authorize, validate
+              input with Zod. Never trust action names as authorization.
+            </li>
+          </ul>
+          <pre><code class="language-ts">// lib/db.ts
+import 'server-only'
+export const db = new Prisma()</code></pre>
+        </section>
+
+        <section id="deployment">
+          <h2><span class="num">17</span>Deployment &amp; Monitoring</h2>
+          <h3>Vercel vs self-host</h3>
+          <ul>
+            <li>
+              <strong>Vercel</strong> — first-class: ISR, edge, image
+              optimization, analytics, preview deploys.
+            </li>
+            <li>
+              <strong>Self-host</strong> via <code>next start</code> (Node) or
+              container. Static export via <code>output: 'export'</code>.
+            </li>
+            <li>
+              <strong>Docker</strong>: <code>output: 'standalone'</code> →
+              minimal ~50 MB runtime folder.
+            </li>
+            <li>
+              Third-party ISR: Netlify supports it; custom Node servers need to
+              proxy revalidation to shared cache.
+            </li>
+          </ul>
+          <h3>Observability</h3>
+          <ul>
+            <li>
+              <code>instrumentation.ts</code> to wire OpenTelemetry, Sentry,
+              Datadog.
+            </li>
+            <li>
+              Structured JSON logs correlated with a request ID set in
+              middleware.
+            </li>
+            <li>
+              RUM via Vercel Speed Insights or a custom Web Vitals reporter.
+            </li>
+          </ul>
+          <pre><code class="language-ts">// instrumentation.ts
+export async function register() {
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
+    await import('./sentry.server.config')
+  }
+}</code></pre>
+        </section>
+
+        <section id="system-design">
+          <h2>
+            <span class="num">18</span>System Design with Next.js
+            <span class="tag hot">Senior</span>
+          </h2>
+          <p>Framework for tackling design rounds:</p>
+          <ol>
+            <li>
+              <strong>Clarify requirements &amp; scale.</strong> Read/write mix,
+              latency budgets, geo, SEO, personalization.
+            </li>
+            <li>
+              <strong>Rendering per surface.</strong>
+              <ul>
+                <li>Marketing/docs → SSG or ISR.</li>
+                <li>Product pages → ISR with tag revalidation from CMS.</li>
+                <li>Search / logged-in feed → SSR + streaming, or PPR.</li>
+                <li>Dashboards → SSR shell + client SWR.</li>
+              </ul>
+            </li>
+            <li>
+              <strong>Data layer.</strong> Postgres via Prisma/Drizzle, read
+              replicas, pooling (PgBouncer, Prisma Data Proxy, Neon serverless
+              driver for edge).
+            </li>
+            <li>
+              <strong>Caching strategy.</strong> Data Cache tags per entity; CMS
+              webhook → revalidate; CDN cache headers on static assets; client
+              SWR for real-time-ish.
+            </li>
+            <li>
+              <strong>Auth.</strong> Cookie session verified in middleware +
+              re-verified in data layer.
+            </li>
+            <li>
+              <strong>Edge vs Node.</strong> Personalization/A/B at edge; heavy
+              compute (PDF, images) in Node or a worker service.
+            </li>
+            <li>
+              <strong>Observability &amp; SLO.</strong> Error tracking, tracing,
+              Web Vitals, uptime.
+            </li>
+            <li>
+              <strong>Rollout.</strong> Preview deploys per PR, feature flags,
+              canary via middleware weight routing.
+            </li>
+          </ol>
+          <h3>Sample: "Design a Twitter clone"</h3>
+          <ul>
+            <li>
+              Home feed: SSR shell + streamed timeline; SWR appends new tweets
+              via polling / WebSocket.
+            </li>
+            <li>
+              Profile: ISR with per-user tag; revalidate on new tweet action.
+            </li>
+            <li>
+              Compose: server action; optimistic via <code>useOptimistic</code>.
+            </li>
+            <li>Auth: cookie session; middleware guards <code>/home</code>.</li>
+            <li>Search: dynamic SSR reading <code>searchParams</code>.</li>
+            <li>Media: S3 via <code>next/image</code> loader.</li>
+            <li>Fan-out on write for followers; store timelines in Redis.</li>
+          </ul>
+          <h3>Sample: "Design e-commerce"</h3>
+          <ul>
+            <li>
+              PDP: PPR — static above the fold; streamed pricing/inventory/recs.
+            </li>
+            <li>
+              Cart: cookie + server action <code>addToCart</code> →
+              <code>revalidateTag('cart')</code>.
+            </li>
+            <li>Checkout: full dynamic SSR (session).</li>
+            <li>
+              CMS-driven marketing: ISR + on-demand revalidation on publish.
+            </li>
+            <li>
+              Search: Algolia/Meilisearch behind a route handler; SSR results
+              for SEO.
+            </li>
+          </ul>
+          <h3>Sample: "Design a real-time dashboard"</h3>
+          <ul>
+            <li>
+              Server shell renders layout + user profile from cookie session.
+            </li>
+            <li>Server component streams initial data via Suspense.</li>
+            <li>Client component opens WebSocket / SSE for live updates.</li>
+            <li>
+              Charts use dynamic import with <code>ssr: false</code> to keep
+              server payload small.
+            </li>
+          </ul>
+        </section>
+
+        <section id="pitfalls">
+          <h2><span class="num">19</span>Common Pitfalls</h2>
+          <div class="grid">
+            <div class="card">
+              <h4>❌ Sequential awaits</h4>
+              <p>
+                Fetch A then B when they could run in parallel. Use
+                <code>Promise.all</code>.
+              </p>
+            </div>
+            <div class="card">
+              <h4>❌ "use client" too high</h4>
+              <p>
+                Marking a layout as client component turns everything into
+                client code. Push it to leaves.
+              </p>
+            </div>
+            <div class="card">
+              <h4>❌ Importing server code into client</h4>
+              <p>
+                Breaks the build. Use <code>server-only</code> + prop drilling /
+                children.
+              </p>
+            </div>
+            <div class="card">
+              <h4>❌ Ignoring the caches</h4>
+              <p>
+                Not tagging fetches → can't invalidate on mutation. Data goes
+                stale.
+              </p>
+            </div>
+            <div class="card">
+              <h4>❌ Auth only in middleware</h4>
+              <p>
+                Middleware isn't a security boundary for direct API calls.
+                Re-check in data layer.
+              </p>
+            </div>
+            <div class="card">
+              <h4>❌ Missing <code>await</code> on Next 15 APIs</h4>
+              <p>
+                <code>params</code>, <code>cookies()</code>,
+                <code>headers()</code> are now Promises.
+              </p>
+            </div>
+            <div class="card">
+              <h4>❌ Global mutable state on server</h4>
+              <p>
+                Bleeds across requests. Use per-request context or React
+                <code>cache()</code>.
+              </p>
+            </div>
+            <div class="card">
+              <h4>❌ Missing <code>alt</code> or dimensions</h4>
+              <p>
+                <code>next/image</code> needs width/height (or fill) to avoid
+                CLS.
+              </p>
+            </div>
+            <div class="card">
+              <h4>❌ Env vars leaked to client</h4>
+              <p>
+                <code>NEXT_PUBLIC_*</code> is inlined into JS bundle — never for
+                secrets.
+              </p>
+            </div>
+            <div class="card">
+              <h4>❌ Trusting client-supplied IDs</h4>
+              <p>Always derive user from session server-side.</p>
+            </div>
+            <div class="card">
+              <h4>❌ Storing session in localStorage</h4>
+              <p>Vulnerable to XSS. Use HTTP-only cookies.</p>
+            </div>
+            <div class="card">
+              <h4>❌ Big client bundles</h4>
+              <p>
+                Import icons/libs at the leaf, prefer tree-shakable packages,
+                use <code>optimizePackageImports</code>.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="rapid-fire">
+          <h2><span class="num">20</span>Rapid-Fire Q&amp;A</h2>
+          <p>Click any question to expand.</p>
+
+          <details class="qa">
+            <summary>
+              Explain the difference between SSR, SSG, ISR, CSR, and RSC.
+            </summary>
+            <div class="qa-body">
+              <p>
+                <strong>CSR</strong> renders in the browser; slow first paint,
+                poor SEO. <strong>SSR</strong> renders HTML on every request;
+                fresh but slower TTFB. <strong>SSG</strong> renders at build
+                time; fastest but stale. <strong>ISR</strong> = SSG +
+                timed/on-demand rebuilds. <strong>RSC</strong> is a
+                component-level model: server components produce serialized UI,
+                sent as an "RSC payload," never shipping their JS. Combined with
+                Suspense you get streaming, and with Partial Prerendering a
+                static shell with dynamic holes.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>What is the RSC payload?</summary>
+            <div class="qa-body">
+              <p>
+                A serialized representation of the rendered React tree — a mix
+                of HTML markup, references to client components (chunks to
+                load), and their serialized props. It's what Next sends to the
+                browser after navigation instead of a raw HTML re-render,
+                enabling seamless updates without a full-page reload.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How do you invalidate a cached fetch?</summary>
+            <div class="qa-body">
+              <p>
+                Three options: (1) time-based — <code>next.revalidate: N</code>;
+                (2) tag-based — tag the fetch with
+                <code>next.tags: ['posts']</code> and call
+                <code>revalidateTag('posts')</code> from a server action / route
+                handler after a mutation; (3) path-based —
+                <code>revalidatePath('/blog')</code>.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How do you handle authentication?</summary>
+            <div class="qa-body">
+              <p>
+                Sign a session cookie (HTTP-only, SameSite=Lax, Secure). Verify
+                it in middleware for coarse redirects, then re-verify in the
+                data layer (server components, actions, route handlers) —
+                middleware alone isn't a security boundary. For production,
+                Auth.js / Clerk gives you OAuth, session mgmt, CSRF out of the
+                box.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>When would you choose Pages Router today?</summary>
+            <div class="qa-body">
+              <p>
+                Rarely for greenfield. Reasons might be: heavy dependency on a
+                library not compatible with RSC yet, an existing large codebase,
+                or a team not ready to learn the new model. Both routers can
+                coexist during migration.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>
+              What's the difference between <code>router.push</code> and
+              <code>router.replace</code>?
+            </summary>
+            <div class="qa-body">
+              <p>
+                <code>push</code> adds an entry to the browser history stack;
+                back button returns to the previous URL.
+                <code>replace</code> swaps the current entry so back skips it.
+                Use <code>replace</code> after login/redirects where you don't
+                want the user to bounce back.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Explain <code>generateStaticParams</code>.</summary>
+            <div class="qa-body">
+              <p>
+                Pre-generate dynamic segments at build. Return an array of param
+                objects; Next builds a static page per entry. Combine with
+                <code>dynamicParams = false</code> to 404 anything not listed,
+                or leave it <code>true</code> (default) to lazily generate on
+                first request (ISR).
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>
+              What is <code>notFound()</code> and where can you call it?
+            </summary>
+            <div class="qa-body">
+              <p>
+                A throwable helper from <code>next/navigation</code>. Throw it
+                in a server component, layout, or route handler to render the
+                nearest <code>not-found.tsx</code> with a 404 status. Not a
+                hook; can't be called in client components.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>
+              Why does Next.js prefer cookies over localStorage for sessions?
+            </summary>
+            <div class="qa-body">
+              <p>
+                Cookies are automatically sent on every request, so the server
+                can render personalized UI in RSC. HTTP-only cookies are
+                invisible to JS, mitigating XSS token theft. LocalStorage is
+                client-only and can't be read during SSR/RSC.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How would you implement A/B testing?</summary>
+            <div class="qa-body">
+              <p>
+                Middleware: assign a bucket cookie on first request, then
+                rewrite the URL to <code>/product/(a)/…</code> or
+                <code>/product/(b)/…</code> route group. Because it's an
+                internal rewrite the URL stays clean. Log the exposure event.
+                For very lightweight experiments, use edge config / feature
+                flags read in a server component.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How do you stream data from an LLM/AI provider?</summary>
+            <div class="qa-body">
+              <p>
+                Route handler with a <code>ReadableStream</code> response, or
+                the Vercel AI SDK's <code>streamText</code>. On the client,
+                consume with <code>useChat</code> or manually with
+                <code>fetch</code> + <code>response.body.getReader()</code>. Set
+                <code>runtime = 'edge'</code> for low-latency TTFB.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>
+              How do you migrate from Pages Router to App Router?
+            </summary>
+            <div class="qa-body">
+              <p>
+                Incrementally. Both can coexist: add an
+                <code>app/</code> directory alongside <code>pages/</code>.
+                Migrate route by route, starting with pages that would most
+                benefit from RSC/streaming (heavy data, personalized
+                dashboards). Replace <code>getServerSideProps</code>/<code
+                  >getStaticProps</code
+                >
+                with fetch in server components, and API routes with route
+                handlers or server actions.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Why can Server Components not use hooks?</summary>
+            <div class="qa-body">
+              <p>
+                Hooks depend on React's reconciler and a client-side lifecycle
+                (mount/unmount, batched updates). Server Components run once on
+                the server to produce serialized output — there's no lifecycle
+                to hook into. State/effects belong on the client.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>What are common causes of hydration mismatch?</summary>
+            <div class="qa-body">
+              <p>
+                Rendering different HTML on server vs client — e.g. reading
+                <code>Date.now()</code>, <code>Math.random()</code>,
+                <code>window</code>, <code>localStorage</code>, user's locale,
+                or feature-flag results only known client-side. Fixes: keep
+                initial render deterministic; move dynamic-only UI behind
+                <code>useEffect</code> or <code>ssr: false</code> dynamic
+                import.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>
+              How do you protect against timing attacks in a session check?
+            </summary>
+            <div class="qa-body">
+              <p>
+                Use <code>crypto.timingSafeEqual</code> when comparing
+                tokens/HMACs. Never compare with <code>===</code> which
+                short-circuits and leaks length/prefix info.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>
+              What's the difference between <code>revalidatePath</code> and
+              <code>router.refresh()</code>?
+            </summary>
+            <div class="qa-body">
+              <p>
+                <code>revalidatePath</code> is a server call — invalidates Data
+                Cache + Full Route Cache for a path, affects all users.
+                <code>router.refresh()</code> is a client call — re-fetches the
+                current route's RSC payload for this user only.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>Explain Turbopack vs Webpack.</summary>
+            <div class="qa-body">
+              <p>
+                Turbopack is Vercel's incremental bundler written in Rust — much
+                faster HMR and cold start than Webpack. It's the default dev
+                bundler from Next 15 (<code>next dev --turbo</code>) and moving
+                toward parity for production builds. Still opt-in for prod as of
+                writing.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How do you set custom HTTP headers?</summary>
+            <div class="qa-body">
+              <p>
+                Three places: (1) <code>next.config.js</code>
+                <code>headers()</code> function for static rules; (2) middleware
+                for per-request logic; (3) inside a route handler by writing to
+                the returned <code>NextResponse.headers</code>.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>How does prefetching work?</summary>
+            <div class="qa-body">
+              <p>
+                <code>&lt;Link&gt;</code> in production prefetches the target
+                route's RSC payload when the link enters the viewport (or on
+                hover). Static routes get the full payload; dynamic ones get
+                just the shell. Disable per link with
+                <code>prefetch={false}</code>, or globally via router options.
+              </p>
+            </div>
+          </details>
+
+          <details class="qa">
+            <summary>What is <code>draftMode()</code>?</summary>
+            <div class="qa-body">
+              <p>
+                An App Router utility that bypasses static rendering for the
+                current request — used for CMS preview modes. Toggled by a
+                signed cookie set from a webhook route. Cache is skipped,
+                letting editors see unpublished drafts.
+              </p>
+            </div>
+          </details>
+        </section>
+
+        <section id="behavioral">
+          <h2><span class="num">21</span>Behavioral &amp; Leadership</h2>
+          <p>
+            Senior interviews balance technical depth with judgment. Prepare
+            concise STAR-format stories for:
+          </p>
+          <ul>
+            <li>
+              A time you drove a large migration (e.g. Pages → App Router).
+            </li>
+            <li>A performance problem you diagnosed end-to-end.</li>
+            <li>A production incident and what you changed afterward.</li>
+            <li>A disagreement with a colleague and how it resolved.</li>
+            <li>
+              Mentoring — helping a junior get unblocked, code review feedback.
+            </li>
+            <li>A decision to say "no" or de-scope work.</li>
+            <li>How you weigh technical debt vs shipping.</li>
+          </ul>
+          <h3>Sample prompts to rehearse</h3>
+          <ul>
+            <li>"Walk me through the most complex system you've built."</li>
+            <li>
+              "How do you evaluate a new framework or library for adoption?"
+            </li>
+            <li>"Describe your ideal code review process."</li>
+            <li>"How do you approach testing strategy for a large app?"</li>
+            <li>
+              "Tell me about a technical decision you'd make differently in
+              hindsight."
+            </li>
+          </ul>
+          <div class="callout">
+            <div class="label">Tip</div>
+            <p>
+              For each story, prepare: the <strong>situation</strong>, your
+              specific <strong>role</strong> (avoid "we"), the
+              <strong>trade-offs</strong> you considered, the
+              <strong>action</strong>, the
+              <strong>metric-backed result</strong>, and what you'd
+              <strong>do differently</strong> now.
+            </p>
+          </div>
+        </section>
+
+        <section id="checklist">
+          <h2><span class="num">22</span>Prep Checklist</h2>
+          <h3>Week 1 — Core</h3>
+          <ul>
+            <li>Read Next.js docs "App Router" section end-to-end.</li>
+            <li>
+              Build a small project with dynamic routes, layouts, loading &amp;
+              error UI.
+            </li>
+            <li>
+              Understand every entry in the file-system conventions table.
+            </li>
+          </ul>
+          <h3>Week 2 — Data &amp; caching</h3>
+          <ul>
+            <li>Draw the four caching layers from memory.</li>
+            <li>Implement ISR with on-demand revalidation via a webhook.</li>
+            <li>
+              Wire up a server action with Zod validation and optimistic UI.
+            </li>
+          </ul>
+          <h3>Week 3 — Performance</h3>
+          <ul>
+            <li>
+              Profile a page with Lighthouse and fix LCP / CLS / INP issues.
+            </li>
+            <li>
+              Run <code>@next/bundle-analyzer</code>, cut a client bundle by 30
+              %.
+            </li>
+            <li>Convert a slow SSR page to PPR + Suspense.</li>
+          </ul>
+          <h3>Week 4 — Systems &amp; polish</h3>
+          <ul>
+            <li>
+              Sketch three system-design answers (feed, e-commerce, dashboard).
+            </li>
+            <li>
+              Practice explaining RSC to a non-React engineer in &lt; 2 minutes.
+            </li>
+            <li>Rehearse 6 behavioral stories with a partner.</li>
+          </ul>
+          <div class="callout ok">
+            <div class="label">Final tip</div>
+            <p>
+              The best senior Next.js interviews turn into architecture
+              conversations. Ground every answer in <strong>trade-offs</strong>:
+              latency vs freshness, bundle size vs interactivity, complexity vs
+              velocity. Interviewers want to see you reason, not recite.
+            </p>
+          </div>
+        </section>
+        <footer>
+          <p>
+            Built as a self-contained study guide. Push to a GitHub repo, enable
+            Pages, done.
+          </p>
+          <p>
+            <a href="https://nextjs.org/docs">Official Next.js docs</a> ·
+            <a href="#top">Back to top</a>
+          </p>
+        </footer>
+      </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-tsx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script>
+      const themeBtn = document.getElementById("theme-toggle");
+      const saved = localStorage.getItem("theme");
+      if (saved) document.documentElement.setAttribute("data-theme", saved);
+      themeBtn.addEventListener("click", () => {
+        const cur =
+          document.documentElement.getAttribute("data-theme") === "light"
+            ? ""
+            : "light";
+        document.documentElement.setAttribute("data-theme", cur);
+        localStorage.setItem("theme", cur);
+      });
+      document.getElementById("expand-all").addEventListener("click", (e) => {
+        const opening = e.target.textContent === "Expand all";
+        document
+          .querySelectorAll("details.qa")
+          .forEach((d) => (d.open = opening));
+        e.target.textContent = opening ? "Collapse all" : "Expand all";
+      });
+      const search = document.getElementById("search");
+      search.addEventListener("input", () => {
+        const q = search.value.trim().toLowerCase();
+        document.querySelectorAll("section").forEach((s) => {
+          if (!q) {
+            s.classList.remove("hidden");
+            s.querySelectorAll("details.qa,h3,h4,p,li,pre,.callout").forEach(
+              (el) => el.classList.remove("hidden"),
+            );
+            return;
+          }
+          const txt = s.textContent.toLowerCase();
+          s.classList.toggle("hidden", !txt.includes(q));
+        });
+      });
+      const links = document.querySelectorAll(".toc a");
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              const id = e.target.id;
+              links.forEach((l) =>
+                l.classList.toggle(
+                  "active",
+                  l.getAttribute("href") === "#" + id,
+                ),
+              );
+            }
+          });
+        },
+        { rootMargin: "-30% 0px -60% 0px" },
+      );
+      document.querySelectorAll("section[id]").forEach((s) => io.observe(s));
+    </script>
+  </body>
+</html>
